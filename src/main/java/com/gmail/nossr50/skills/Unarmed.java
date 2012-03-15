@@ -13,7 +13,7 @@ public class Unarmed {
 	
 	public static void unarmedBonus(Player attacker, EntityDamageByEntityEvent event)
 	{
-		int bonus = 3;
+		int bonus = 2;
 		
 		//Add 1 DMG for every 50 skill levels
 		bonus += Users.getProfile(attacker).getSkillLevel(SkillType.UNARMED)/50;
@@ -31,7 +31,7 @@ public class Unarmed {
 		{
 			if(skillLevel >= 1000)
 			{
-				if(Math.random() * 3000 <= 1000)
+				if(Math.random() * 5000 <= 1000)
 				{
 	    			ItemStack item = defender.getItemInHand();
 	    			defender.sendMessage(mcLocale.getString("Skills.Disarmed"));
@@ -41,7 +41,7 @@ public class Unarmed {
 	    	} 
 			else
     		{
-				if(Math.random() * 3000 <= skillLevel)
+				if(Math.random() * 5000 <= skillLevel)
 				{
 	    			ItemStack item = defender.getItemInHand();
 	    			defender.sendMessage(mcLocale.getString("Skills.Disarmed"));

@@ -102,10 +102,10 @@ public class Axes {
          */
         if (target instanceof Player) {
             Player targetPlayer = (Player) target;
-            short durabilityDamage = 5; //Start with 5 durability damage
+            short durabilityDamage = 2; //Start with 2 durability damage
 
-            /* Every 30 Skill Levels you gain 1 durability damage */
-            durabilityDamage += Users.getProfile(attacker).getSkillLevel(SkillType.AXES)/30;
+            /* Every 60 Skill Levels you gain 1 durability damage */
+            durabilityDamage += Users.getProfile(attacker).getSkillLevel(SkillType.AXES)/60;
 
             if (!hasArmor(targetPlayer)) {
                 applyImpact(attacker, target, event);
@@ -114,7 +114,6 @@ public class Axes {
                 for (ItemStack armor : targetPlayer.getInventory().getArmorContents()) {
                     armor.setDurability((short) (armor.getDurability() + durabilityDamage)); //Damage armor piece
                 }
-                targetPlayer.updateInventory();
             }
         }
         else {
@@ -130,7 +129,7 @@ public class Axes {
      * @param event The event to modify
      */
     private static void applyImpact(Player attacker, LivingEntity target, EntityDamageByEntityEvent event) {
-        final int GREATER_IMPACT_CHANCE = 25;
+        final int GREATER_IMPACT_CHANCE = 10;
         final double GREATER_IMPACT_MULTIPLIER = 1.5;
 
         if (Math.random() * 100 <= GREATER_IMPACT_CHANCE) {

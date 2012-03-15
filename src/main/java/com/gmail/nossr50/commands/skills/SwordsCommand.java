@@ -24,7 +24,7 @@ public class SwordsCommand implements CommandExecutor {
 		PlayerProfile PP = Users.getProfile(player);
 
 		int bleedrank = 2;
-		String percentage, counterattackpercentage;
+		String percentage, counterattackpercentage, slowpercentage;
 
 		float skillvalue = (float) PP.getSkillLevel(SkillType.SWORDS);
 		if (PP.getSkillLevel(SkillType.SWORDS) < 750)
@@ -39,6 +39,11 @@ public class SwordsCommand implements CommandExecutor {
 			counterattackpercentage = String.valueOf((skillvalue / 2000) * 100);
 		else
 			counterattackpercentage = "30";
+		
+		if (PP.getSkillLevel(SkillType.SWORDS) <= 600)
+			slowpercentage = String.valueOf((skillvalue / 2000) * 100);
+		else
+			slowpercentage = "30";
 
 		int ticks = 2;
 		int x = PP.getSkillLevel(SkillType.SWORDS);
@@ -46,6 +51,8 @@ public class SwordsCommand implements CommandExecutor {
 			x -= 50;
 			ticks++;
 		}
+		
+		
 
 		player.sendMessage(mcLocale.getString("m.SkillHeader", new Object[] { mcLocale.getString("m.SkillSwords") }));
 		player.sendMessage(mcLocale.getString("m.XPGain", new Object[] { mcLocale.getString("m.XPGainSwords") }));
@@ -58,12 +65,14 @@ public class SwordsCommand implements CommandExecutor {
 		player.sendMessage(mcLocale.getString("m.EffectsTemplate", new Object[] { mcLocale.getString("m.EffectsSwords2_0"), mcLocale.getString("m.EffectsSwords2_1") }));
 		player.sendMessage(mcLocale.getString("m.EffectsTemplate", new Object[] { mcLocale.getString("m.EffectsSwords3_0"), mcLocale.getString("m.EffectsSwords3_1") }));
 		player.sendMessage(mcLocale.getString("m.EffectsTemplate", new Object[] { mcLocale.getString("m.EffectsSwords5_0"), mcLocale.getString("m.EffectsSwords5_1") }));
+		player.sendMessage(mcLocale.getString("m.EffectsTemplate", new Object[] { mcLocale.getString("m.EffectsSwords6_0"), mcLocale.getString("m.EffectsSwords6_1") }));
 		player.sendMessage(mcLocale.getString("m.SkillHeader", new Object[] { mcLocale.getString("m.YourStats") }));
 		player.sendMessage(mcLocale.getString("m.SwordsCounterAttChance", new Object[] { counterattackpercentage }));
 		player.sendMessage(mcLocale.getString("m.SwordsBleedLength", new Object[] { bleedrank }));
 		player.sendMessage(mcLocale.getString("m.SwordsTickNote"));
 		player.sendMessage(mcLocale.getString("m.SwordsBleedChance", new Object[] { percentage }));
 		player.sendMessage(mcLocale.getString("m.SwordsSSLength", new Object[] { ticks }));
+		player.sendMessage(mcLocale.getString("m.SwordsSlowChance", new Object[] { slowpercentage }));
 		
 		Page.grabGuidePageForSkill(SkillType.SWORDS, player, args);
 

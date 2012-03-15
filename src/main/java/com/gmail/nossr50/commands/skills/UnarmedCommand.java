@@ -27,9 +27,9 @@ public class UnarmedCommand implements CommandExecutor {
 		float skillvalue = (float) PP.getSkillLevel(SkillType.UNARMED);
 
 		if (PP.getSkillLevel(SkillType.UNARMED) < 1000)
-			percentage = String.valueOf((skillvalue / 3000) * 100);
+			percentage = String.valueOf((skillvalue / 5000) * 100);
 		else
-			percentage = "33.3";
+			percentage = "20.0";
 
 		if (PP.getSkillLevel(SkillType.UNARMED) < 1000)
 			arrowpercentage = String.valueOf(((skillvalue / 1000) * 100) / 2);
@@ -38,12 +38,12 @@ public class UnarmedCommand implements CommandExecutor {
 
 		int ticks = 2;
 		int x = PP.getSkillLevel(SkillType.UNARMED);
-		while (x >= 50) {
-			x -= 50;
+		while (x >= 10) {
+			x -= 100;
 			ticks++;
 		}
 		
-		int bonus = 3 + (PP.getSkillLevel(SkillType.UNARMED)/50);
+		int bonus = 2 + (PP.getSkillLevel(SkillType.UNARMED)/50);
 		
 		if(bonus > 8)
 		    bonus = 8;

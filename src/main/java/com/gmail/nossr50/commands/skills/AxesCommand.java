@@ -36,7 +36,7 @@ public class AxesCommand implements CommandExecutor {
 
 		int ticks = 2;
 		short durDmg = 5;
-		durDmg+=Users.getProfile(player).getSkillLevel(SkillType.AXES)/30;
+		durDmg+=Users.getProfile(player).getSkillLevel(SkillType.AXES)/60;
 		int x = PP.getSkillLevel(SkillType.AXES);
 		while (x >= 50) {
 			x -= 50;
