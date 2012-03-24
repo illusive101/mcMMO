@@ -25,6 +25,7 @@ import org.bukkit.inventory.ItemStack;
 import com.gmail.nossr50.BlockChecks;
 import com.gmail.nossr50.Combat;
 import com.gmail.nossr50.Item;
+import com.gmail.nossr50.ItemChecks;
 import com.gmail.nossr50.Users;
 import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.mcPermissions;
@@ -66,6 +67,13 @@ public class mcPlayerListener implements Listener {
                 player.sendMessage(mcLocale.getString("GodMode.Forbidden"));
             }
         }
+
+        if (PP.inParty()) {
+            if (!mcPermissions.getInstance().party(player)) {
+                PP.removeParty();
+                player.sendMessage(mcLocale.getString("Party.Forbidden"));
+            }
+        }
     }
 
     /**
@@ -86,7 +94,7 @@ public class mcPlayerListener implements Listener {
                 break;
 
             case CAUGHT_ENTITY:
-                if (Users.getProfile(player).getSkillLevel(SkillType.FISHING) >= 150) {
+                if (Users.getProfile(player).getSkillLevel(SkillType.FISHING) >= 150 && mcPermissions.getInstance().shakeMob(player)) {
                     Fishing.shakeMob(event);
                 }
                 break;
@@ -141,9 +149,6 @@ public class mcPlayerListener implements Listener {
             Combat.dealDamage(player, PP.getBleedTicks()*2);
         }
 
-        //Save PlayerData to MySQL/FlatFile on player quit
-        PP.save();
-
         //Schedule PlayerProfile removal 2 minutes after quitting
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new RemoveProfileFromMemoryTask(player), 2400);
     }
@@ -173,7 +178,7 @@ public class mcPlayerListener implements Listener {
      *
      * @param event The event to watch
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
@@ -194,8 +199,8 @@ public class mcPlayerListener implements Listener {
         case RIGHT_CLICK_BLOCK:
 
             /* REPAIR CHECKS */
-            if (mcPermissions.getInstance().repair(player) && block.getTypeId() == LoadProperties.anvilID && (Repair.isTools(is) || Repair.isArmor(is))) {
-                Repair.repairCheck(player, is, event.getClickedBlock());
+            if (mcPermissions.getInstance().repair(player) && block.getTypeId() == LoadProperties.anvilID && (ItemChecks.isTool(is) || ItemChecks.isArmor(is))) {
+                Repair.repairCheck(player, is);
                 event.setCancelled(true);
                 player.updateInventory();
             }
@@ -215,7 +220,7 @@ public class mcPlayerListener implements Listener {
             }
 
             /* GREEN THUMB CHECK */
-            if (mcPermissions.getInstance().herbalism(player) && Herbalism.makeMossy(mat) && is.getType().equals(Material.SEEDS)) {
+            if (mcPermissions.getInstance().greenThumbBlocks(player) && Herbalism.makeMossy(mat) && is.getType().equals(Material.SEEDS)) {
                 Herbalism.greenThumbBlocks(is, player, block);
             }
 
@@ -260,10 +265,10 @@ public class mcPlayerListener implements Listener {
             /* CALL OF THE WILD CHECKS */
             if (player.isSneaking() && mcPermissions.getInstance().taming(player)) {
                 if (is.getType().equals(Material.RAW_FISH)) {
-                    Taming.animalSummon(EntityType.OCELOT, player);
+                    Taming.animalSummon(EntityType.OCELOT, player, plugin);
                 }
                 else if (is.getType().equals(Material.BONE)) {
-                    Taming.animalSummon(EntityType.WOLF, player);
+                    Taming.animalSummon(EntityType.WOLF, player, plugin);
                 }
             }
 

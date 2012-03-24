@@ -20,6 +20,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import com.gmail.nossr50.Combat;
 import com.gmail.nossr50.Users;
@@ -32,6 +33,7 @@ import com.gmail.nossr50.datatypes.SkillType;
 import com.gmail.nossr50.events.FakeEntityDamageByEntityEvent;
 import com.gmail.nossr50.events.FakeEntityDamageEvent;
 import com.gmail.nossr50.party.Party;
+import com.gmail.nossr50.runnables.mcBleedTimer;
 import com.gmail.nossr50.skills.Acrobatics;
 import com.gmail.nossr50.skills.Archery;
 import com.gmail.nossr50.skills.BlastMining;
@@ -111,7 +113,7 @@ public class mcEntityListener implements Listener {
                 if (cause == DamageCause.FALL && mcPermissions.getInstance().acrobatics(player)) {
                     Acrobatics.acrobaticsCheck(player, event);
                 }
-                else if (cause == DamageCause.BLOCK_EXPLOSION && mcPermissions.getInstance().blastMining(player)) {
+                else if (cause == DamageCause.BLOCK_EXPLOSION && mcPermissions.getInstance().demolitionsExpertise(player)) {
                     BlastMining.demolitionsExpertise(player, event);
                 }
 
@@ -125,7 +127,7 @@ public class mcEntityListener implements Listener {
             Wolf wolf = (Wolf) entity;
 
             if ((!m.isInvincible(wolf, event)) && wolf.isTamed() && (wolf.getOwner() instanceof Player)) {
-                Taming.preventDamage(event, plugin);
+                Taming.preventDamage(event);
             }
             break;
 
@@ -144,15 +146,8 @@ public class mcEntityListener implements Listener {
         LivingEntity x = event.getEntity();
         x.setFireTicks(0);
 
-        /* Remove mob from mob spawner list */
-        if (plugin.misc.mobSpawnerList.contains(x.getEntityId())) {
-            plugin.misc.mobSpawnerList.remove((Object)x.getEntityId());
-        }
-
         /* Remove bleed track */
-        if(plugin.misc.bleedTracker.contains(x)) {
-            plugin.misc.addToBleedRemovalQue(x);
-        }
+        mcBleedTimer.remove(x);
 
         Archery.arrowRetrievalCheck(x, plugin);
 
@@ -169,7 +164,7 @@ public class mcEntityListener implements Listener {
     @EventHandler (priority = EventPriority.MONITOR)
     public void onCreatureSpawn(CreatureSpawnEvent event) {
         if (event.getSpawnReason().equals(SpawnReason.SPAWNER) && !LoadProperties.xpGainsMobSpawners) {
-            plugin.misc.mobSpawnerList.add(event.getEntity().getEntityId());
+            event.getEntity().setMetadata("mcmmoFromMobSpawner", new FixedMetadataValue(plugin, true));
         }
     }
 
@@ -185,9 +180,12 @@ public class mcEntityListener implements Listener {
         if (entity instanceof TNTPrimed) {
             int id = entity.getEntityId();
 
-            if (plugin.misc.tntTracker.containsKey(id)) {
-                Player player = plugin.misc.tntTracker.get(id);
-                BlastMining.biggerBombs(player, event);
+            if (plugin.tntTracker.containsKey(id)) {
+                Player player = plugin.tntTracker.get(id);
+
+                if (mcPermissions.getInstance().biggerBombs(player)) {
+                    BlastMining.biggerBombs(player, event);
+                }
             }
         }
     }
@@ -204,10 +202,10 @@ public class mcEntityListener implements Listener {
         if (event.getEntity() instanceof TNTPrimed) {
             int id = entity.getEntityId();
 
-            if (plugin.misc.tntTracker.containsKey(id)) {
-                Player player = plugin.misc.tntTracker.get(id);
-                BlastMining.dropProcessing(player, event, plugin);
-                plugin.misc.tntTracker.remove(id);
+            if (plugin.tntTracker.containsKey(id)) {
+                Player player = plugin.tntTracker.get(id);
+                BlastMining.dropProcessing(player, event);
+                plugin.tntTracker.remove(id);
             }
         }
     }
@@ -291,7 +289,7 @@ public class mcEntityListener implements Listener {
     public void onEntityTame(EntityTameEvent event) {
         Player player = (Player) event.getOwner();
 
-        if (mcPermissions.getInstance().taming(player)) {
+        if (mcPermissions.getInstance().taming(player) && !event.getEntity().hasMetadata("mcmmoSummoned")) {
             PlayerProfile PP = Users.getProfile(player);
             EntityType type = event.getEntityType();
             int xp = 0;

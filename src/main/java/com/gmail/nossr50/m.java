@@ -2,6 +2,7 @@ package com.gmail.nossr50;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -9,13 +10,10 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.gmail.nossr50.config.LoadProperties;
 import com.gmail.nossr50.datatypes.PlayerProfile;
 import com.gmail.nossr50.datatypes.SkillType;
 import com.gmail.nossr50.events.FakeBlockBreakEvent;
 import com.gmail.nossr50.events.McMMOItemSpawnEvent;
-import com.gmail.nossr50.runnables.SQLConversionTask;
-import com.gmail.nossr50.skills.Repair;
 
 public class m {
 
@@ -31,6 +29,31 @@ public class m {
         String capitalized = firstLetter.toUpperCase() + remainder.toLowerCase();
 
         return capitalized;
+    }
+
+    /**
+     * Gets a nicely formatted string version of an item name from a given item ID.
+     *
+     * @param itemID The ID of the item to convert to string.
+     * @return the nicely formatting string
+     */
+    public static String prettyItemString(int itemID) {
+        String baseString = Material.getMaterial(itemID).toString();
+        String[] substrings = baseString.split("_");
+        String prettyString = "";
+        int size = 1;
+
+        for (String s : substrings) {
+            prettyString = prettyString.concat(m.getCapitalized(s));
+
+            if (size < substrings.length) {
+                prettyString = prettyString.concat(" ");
+            }
+
+            size++;
+        }
+
+        return prettyString;
     }
 
     /**
@@ -124,19 +147,19 @@ public class m {
     public static Integer getTier(ItemStack inHand) {
         int tier = 0;
 
-        if (Repair.isWoodTools(inHand)) {
+        if (ItemChecks.isWoodTool(inHand)) {
             tier = 1;
         }
-        else if (Repair.isStoneTools(inHand)) {
+        else if (ItemChecks.isStoneTool(inHand)) {
             tier = 2;
         }
-        else if (Repair.isIronTools(inHand)) {
+        else if (ItemChecks.isIronTool(inHand)) {
             tier = 3;
         }
-        else if(Repair.isGoldTools(inHand)) {
+        else if(ItemChecks.isGoldTool(inHand)) {
             tier = 1;
         }
-        else if(Repair.isDiamondTools(inHand))
+        else if(ItemChecks.isDiamondTool(inHand))
             tier = 4;
 
         return tier;
@@ -241,16 +264,12 @@ public class m {
     }
 
     /**
-     * Convert FlatFile data to MySQL data.
+     * Check if a skill level is higher than the max bonus level of the ability.
+     *
+     * @param skillLevel Skill level to check
+     * @param maxLevel Max level of the ability
+     * @return whichever value is lower
      */
-    public static void convertToMySQL() {
-        if (!LoadProperties.useMySQL) {
-            return;
-        }
-
-        Bukkit.getScheduler().scheduleAsyncDelayedTask(Bukkit.getPluginManager().getPlugin("mcMMO"), new SQLConversionTask(), 1);
-    }
-
     public static int skillCheck(int skillLevel, int maxLevel) {
         if (skillLevel > maxLevel) {
             return maxLevel;

@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import com.gmail.nossr50.Users;
 import com.gmail.nossr50.m;
 import com.gmail.nossr50.mcMMO;
+import com.gmail.nossr50.mcPermissions;
 import com.gmail.nossr50.datatypes.PlayerProfile;
 import com.gmail.nossr50.datatypes.SkillType;
 import com.gmail.nossr50.locale.mcLocale;
@@ -27,12 +28,12 @@ public class Archery {
         final int MAX_BONUS_LEVEL = 1000;
         int skillLevel = PPa.getSkillLevel(SkillType.ARCHERY);
 
-        if (!plugin.misc.arrowTracker.containsKey(entity)) {
-            plugin.misc.arrowTracker.put(entity, 0);
+        if (!plugin.arrowTracker.containsKey(entity)) {
+            plugin.arrowTracker.put(entity, 0);
         }
 
         if (skillLevel > MAX_BONUS_LEVEL || (Math.random() * 1000 <= skillLevel)) {
-            plugin.misc.arrowTracker.put(entity, 1);
+            plugin.arrowTracker.put(entity, 1);
         }
     }
 
@@ -100,7 +101,7 @@ public class Archery {
             loc.setPitch(-90);
         }
 
-        if (Math.random() * 2000 <= skillCheck) {
+        if (Math.random() * 2000 <= skillCheck && mcPermissions.getInstance().daze(attacker)) {
             defender.teleport(loc);
             defender.sendMessage(mcLocale.getString("Combat.TouchedFuzzy"));
             attacker.sendMessage(mcLocale.getString("Combat.TargetDazed"));
@@ -114,10 +115,10 @@ public class Archery {
      * @param plugin mcMMO plugin instance
      */
     public static void arrowRetrievalCheck(Entity entity, mcMMO plugin) {
-        if (plugin.misc.arrowTracker.containsKey(entity)) {
-            m.mcDropItems(entity.getLocation(), new ItemStack(Material.ARROW), plugin.misc.arrowTracker.get(entity));
+        if (plugin.arrowTracker.containsKey(entity)) {
+            m.mcDropItems(entity.getLocation(), new ItemStack(Material.ARROW), plugin.arrowTracker.get(entity));
         }
 
-        plugin.misc.arrowTracker.remove(entity);
+        plugin.arrowTracker.remove(entity);
     }
 }

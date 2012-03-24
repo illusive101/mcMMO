@@ -8,18 +8,12 @@ import org.bukkit.entity.Player;
 
 import com.gmail.nossr50.Users;
 import com.gmail.nossr50.m;
-import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.mcPermissions;
 import com.gmail.nossr50.datatypes.PlayerProfile;
 import com.gmail.nossr50.locale.mcLocale;
 import com.gmail.nossr50.skills.Skills;
 
 public class MmoeditCommand implements CommandExecutor {
-	private final mcMMO plugin;
-
-	public MmoeditCommand(mcMMO instance) {
-		this.plugin = instance;
-	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -42,7 +36,15 @@ public class MmoeditCommand implements CommandExecutor {
 				return true;
 			} else if (args.length == 3)
 			{
-			    PlayerProfile PPt = Users.getOfflineProfile(args[0]);
+			    PlayerProfile PPt = null;
+			    
+			    if(Users.players.containsKey(args[0].toLowerCase())) {
+			        PPt = Users.players.get(args[0].toLowerCase());
+			    }
+			    
+			    if(PPt == null)
+			        Users.getOfflineProfile(args[0]); //Only grab offline profile if the above failed
+			        
 			    if(!PPt.isLoaded())
 		        {
 		            sender.sendMessage("Player does not exist in the database!");
@@ -53,7 +55,7 @@ public class MmoeditCommand implements CommandExecutor {
 				{
 					int newvalue = Integer.valueOf(args[2]);
 					Users.getOfflineProfile(args[0]).modifyskill(Skills.getSkillType(args[1]), newvalue);
-					System.out.println(args[1] + " has been modified for " + plugin.getServer().getPlayer(args[0]).getName() + ".");
+					System.out.println(args[1] + " has been modified for " + args[0] + ".");
 				}
 			} else 
 			{
@@ -76,7 +78,15 @@ public class MmoeditCommand implements CommandExecutor {
 		}
 		if (args.length == 3) 
 		{
-		    PlayerProfile PPt = Users.getOfflineProfile(args[0]);
+		    PlayerProfile PPt = null;
+            
+            if(Users.players.containsKey(args[0].toLowerCase())) {
+                PPt = Users.players.get(args[0].toLowerCase());
+            }
+            
+            if(PPt == null)
+                Users.getOfflineProfile(args[0]); //Only grab offline profile if the above failed
+            
 		    if(!PPt.isLoaded())
 	        {
 	            sender.sendMessage("Player does not exist in the database!");
@@ -86,7 +96,7 @@ public class MmoeditCommand implements CommandExecutor {
 			if (m.isInt(args[2]) && Skills.isSkill(args[1])) 
 			{
 				int newvalue = Integer.valueOf(args[2]);
-				Users.getOfflineProfile(args[0]).modifyskill(Skills.getSkillType(args[1]), newvalue);
+				PPt.modifyskill(Skills.getSkillType(args[1]), newvalue);
 				player.sendMessage(ChatColor.RED + args[1] + " has been modified for "+args[0]);
 			}
 		} else if (args.length == 2) 

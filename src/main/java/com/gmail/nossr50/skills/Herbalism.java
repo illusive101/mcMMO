@@ -1,6 +1,7 @@
 package com.gmail.nossr50.skills;
 
 import org.bukkit.Bukkit;
+import org.bukkit.CropState;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -12,6 +13,7 @@ import org.bukkit.inventory.PlayerInventory;
 import com.gmail.nossr50.Users;
 import com.gmail.nossr50.m;
 import com.gmail.nossr50.mcMMO;
+import com.gmail.nossr50.mcPermissions;
 import com.gmail.nossr50.config.LoadProperties;
 import com.gmail.nossr50.datatypes.PlayerProfile;
 import com.gmail.nossr50.datatypes.SkillType;
@@ -35,12 +37,12 @@ public class Herbalism {
             player.sendMessage("You need more seeds to spread Green Terra");
         }
         else if (hasSeeds && !block.getType().equals(Material.WHEAT)) {
-            inventory.removeItem(new ItemStack(Material.SEEDS, 1));
+            inventory.removeItem(new ItemStack(Material.SEEDS));
             player.updateInventory();
 
             if (m.blockBreakSimulate(block, player, false)) {
                 if (LoadProperties.enableSmoothToMossy && type.equals(Material.SMOOTH_BRICK)) {
-                    block.setData((byte) 0x1);
+                    block.setData((byte) 0x1); //Set type of the brick to mossy
                 }
                 else if (LoadProperties.enableDirtToGrass && type.equals(Material.DIRT)) {
                     block.setType(Material.GRASS);
@@ -107,6 +109,8 @@ public class Herbalism {
      */
     public static void herbalismProcCheck(final Block block, Player player, BlockBreakEvent event, mcMMO plugin) {
         final PlayerProfile PP = Users.getProfile(player);
+        final int MAX_BONUS_LEVEL = 1000;
+
         int herbLevel = PP.getSkillLevel(SkillType.HERBALISM);
         int id = block.getTypeId();
         Material type = block.getType();
@@ -121,7 +125,7 @@ public class Herbalism {
         switch (type) {
         case BROWN_MUSHROOM:
         case RED_MUSHROOM:
-            if (data != (byte) 0x5) {
+            if (!block.hasMetadata("mcmmoPlacedBlock")) {
                 mat = Material.getMaterial(id);
                 xp = LoadProperties.mmushroom;
             }
@@ -132,8 +136,8 @@ public class Herbalism {
                 Block b = block.getRelative(0, y, 0);
                 if (b.getType().equals(Material.CACTUS)) {
                     mat = Material.CACTUS;
-                    if (!plugin.misc.blockWatchList.contains(b)) {
-                        if(herbLevel > 1000 || (Math.random() * 1000 <= herbLevel)) {
+                    if (!b.hasMetadata("mcmmoPlacedBlock")) {
+                        if(herbLevel > MAX_BONUS_LEVEL || (Math.random() * 1000 <= herbLevel)) {
                             catciDrops++;
                         }
                         xp += LoadProperties.mcactus;
@@ -143,15 +147,18 @@ public class Herbalism {
             break;
 
         case CROPS:
-            if (data == (byte) 0x7) {
+            if (data == CropState.RIPE.getData()) {
                 mat = Material.WHEAT;
                 xp = LoadProperties.mwheat;
-                greenThumbWheat(block, player, event, plugin);
+
+                if (LoadProperties.wheatRegrowth && mcPermissions.getInstance().greenThumbWheat(player)) {
+                    greenThumbWheat(block, player, event, plugin);
+                }
             }
             break;
 
         case MELON_BLOCK:
-            if (data != (byte) 0x5) {
+            if (!block.hasMetadata("mcmmoPlacedBlock")) {
                 mat = Material.MELON;
                 xp = LoadProperties.mmelon;
             }
@@ -166,7 +173,7 @@ public class Herbalism {
 
         case PUMPKIN:
         case JACK_O_LANTERN:
-            if (!plugin.misc.blockWatchList.contains(block)) {
+            if (!block.hasMetadata("mcmmoPlacedBlock")) {
                 mat = Material.getMaterial(id);
                 xp = LoadProperties.mpumpkin;
             }
@@ -174,7 +181,7 @@ public class Herbalism {
 
         case RED_ROSE:
         case YELLOW_FLOWER:
-            if (!plugin.misc.blockWatchList.contains(block)) {
+            if (!block.hasMetadata("mcmmoPlacedBlock")) {
                 mat = Material.getMaterial(id);
                 xp = LoadProperties.mflower;
             }
@@ -185,8 +192,8 @@ public class Herbalism {
                 Block b = block.getRelative(0, y, 0);
                 if (b.getType().equals(Material.SUGAR_CANE_BLOCK)) {
                     mat = Material.SUGAR_CANE;
-                    if (!plugin.misc.blockWatchList.contains(b)) {
-                        if(herbLevel > 1000 || (Math.random() * 1000 <= herbLevel)) {
+                    if (!b.hasMetadata("mcmmoPlacedBlock")) {
+                        if(herbLevel > MAX_BONUS_LEVEL || (Math.random() * 1000 <= herbLevel)) {
                             caneDrops++;
                         }
                         xp += LoadProperties.msugar;
@@ -196,14 +203,14 @@ public class Herbalism {
             break;
 
         case VINE:
-            if (!plugin.misc.blockWatchList.contains(block)) {
+            if (!block.hasMetadata("mcmmoPlacedBlock")) {
                 mat = type;
                 xp = LoadProperties.mvines;
             }
             break;
 
         case WATER_LILY:
-            if (data != (byte) 0x5) {
+            if (!block.hasMetadata("mcmmoPlacedBlock")) {
                 mat = type;
                 xp = LoadProperties.mlilypad;
             }
@@ -219,7 +226,7 @@ public class Herbalism {
         else {
             ItemStack is = new ItemStack(mat);
 
-            if (herbLevel > 1000 || (Math.random() * 1000 <= herbLevel)) {
+            if (herbLevel > MAX_BONUS_LEVEL || (Math.random() * 1000 <= herbLevel)) {
                 if (type.equals(Material.CACTUS)) {
                     m.mcDropItems(loc, is, catciDrops);
                 }
@@ -253,21 +260,23 @@ public class Herbalism {
      * @param plugin mcMMO plugin instance
      */
     private static void greenThumbWheat(Block block, Player player, BlockBreakEvent event, mcMMO plugin) {
+        final int MAX_BONUS_LEVEL = 1500;
+
         PlayerProfile PP = Users.getProfile(player);
         int herbLevel = PP.getSkillLevel(SkillType.HERBALISM);
         PlayerInventory inventory = player.getInventory();
         boolean hasSeeds = inventory.contains(Material.SEEDS);
         Location loc = block.getLocation();
 
-        if (hasSeeds && PP.getGreenTerraMode() || hasSeeds && (herbLevel >= 1500 || (Math.random() * 1500 <= herbLevel))) {
+        if (hasSeeds && PP.getGreenTerraMode() || hasSeeds && (herbLevel > MAX_BONUS_LEVEL || (Math.random() * 1500 <= herbLevel))) {
             event.setCancelled(true);
 
-            m.mcDropItem(loc, new ItemStack(Material.WHEAT, 1));
-            m.mcRandomDropItems(loc, new ItemStack(Material.SEEDS, 1), 50, 3);
+            m.mcDropItem(loc, new ItemStack(Material.WHEAT));
+            m.mcRandomDropItems(loc, new ItemStack(Material.SEEDS), 50, 3);
 
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new GreenThumbTimer(block, PP), 1);
 
-            inventory.removeItem(new ItemStack(Material.SEEDS, 1));
+            inventory.removeItem(new ItemStack(Material.SEEDS));
             player.updateInventory();
         }
     }
@@ -280,13 +289,15 @@ public class Herbalism {
      * @param block The block being used in the ability
      */
     public static void greenThumbBlocks(ItemStack is, Player player, Block block) {
+        final int MAX_BONUS_LEVEL = 1500;
+
         PlayerProfile PP = Users.getProfile(player);
         int skillLevel = PP.getSkillLevel(SkillType.HERBALISM);
         int seeds = is.getAmount();
 
         player.setItemInHand(new ItemStack(Material.SEEDS, seeds - 1));
 
-        if (skillLevel > 1500 || Math.random() * 1500 <= skillLevel) {
+        if (skillLevel > MAX_BONUS_LEVEL || Math.random() * 1500 <= skillLevel) {
             greenTerra(player, block);
         }
         else {

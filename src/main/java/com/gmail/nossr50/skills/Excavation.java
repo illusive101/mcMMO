@@ -11,9 +11,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.event.player.PlayerAnimationEvent;
 
-import com.gmail.nossr50.spout.SpoutStuff;
+import com.gmail.nossr50.spout.SpoutSounds;
 import com.gmail.nossr50.Users;
 import com.gmail.nossr50.m;
+import com.gmail.nossr50.mcPermissions;
 import com.gmail.nossr50.config.LoadProperties;
 import com.gmail.nossr50.config.LoadTreasures;
 import com.gmail.nossr50.datatypes.PlayerProfile;
@@ -40,6 +41,7 @@ public class Excavation {
         case SAND:
         case SOUL_SAND:
             return true;
+
         default:
             return false;
         }
@@ -60,55 +62,57 @@ public class Excavation {
         ArrayList<ItemStack> is = new ArrayList<ItemStack>();
 
         List<ExcavationTreasure> treasures = new ArrayList<ExcavationTreasure>();
-        
+
         int xp = LoadProperties.mbase;
 
-        switch (type) {
-        case DIRT:
-            treasures = LoadTreasures.excavationFromDirt;
-            break;
+        if (mcPermissions.getInstance().excavationTreasures(player)) {
+            switch (type) {
+            case DIRT:
+                treasures = LoadTreasures.excavationFromDirt;
+                break;
 
-        case GRASS:
-            treasures = LoadTreasures.excavationFromGrass;
-            break;
+            case GRASS:
+                treasures = LoadTreasures.excavationFromGrass;
+                break;
 
-        case SAND:
-            treasures = LoadTreasures.excavationFromSand;
-            break;
+            case SAND:
+                treasures = LoadTreasures.excavationFromSand;
+                break;
 
-        case GRAVEL:
-            treasures = LoadTreasures.excavationFromGravel;
-            break;
+            case GRAVEL:
+                treasures = LoadTreasures.excavationFromGravel;
+                break;
 
-        case CLAY:
-            treasures = LoadTreasures.excavationFromClay;
-            break;
+            case CLAY:
+                treasures = LoadTreasures.excavationFromClay;
+                break;
 
-        case MYCEL:
-            treasures = LoadTreasures.excavationFromMycel;
-            break;
+            case MYCEL:
+                treasures = LoadTreasures.excavationFromMycel;
+                break;
 
-        case SOUL_SAND:
-            treasures = LoadTreasures.excavationFromSoulSand;
-            break;
+            case SOUL_SAND:
+                treasures = LoadTreasures.excavationFromSoulSand;
+                break;
 
-        default:
-            break;
-        }
+            default:
+                break;
+            }
 
-        for (ExcavationTreasure treasure : treasures) {
-            if (skillLevel >= treasure.getDropLevel()) {
-                if (Math.random() * 100 <= treasure.getDropChance()) {
-                    xp += treasure.getXp();
-                    is.add(treasure.getDrop());
+            for (ExcavationTreasure treasure : treasures) {
+                if (skillLevel >= treasure.getDropLevel()) {
+                    if (Math.random() * 100 <= treasure.getDropChance()) {
+                        xp += treasure.getXp();
+                        is.add(treasure.getDrop());
+                    }
                 }
             }
-        }
 
-        //Drop items
-        for (ItemStack x : is) {
-            if (x != null) {
-                m.mcDropItem(loc, x);
+            //Drop items
+            for (ItemStack x : is) {
+                if (x != null) {
+                    m.mcDropItem(loc, x);
+                }
             }
         }
 
@@ -126,7 +130,7 @@ public class Excavation {
     public static void gigaDrillBreaker(Player player, Block block) {
         Skills.abilityDurabilityLoss(player.getItemInHand(), LoadProperties.abilityDurabilityLoss);
 
-        if (block.getData() != (byte) 0x5) {
+        if (!block.hasMetadata("mcmmoPlacedBlock")) {
             PlayerAnimationEvent armswing = new PlayerAnimationEvent(player);
             Bukkit.getPluginManager().callEvent(armswing);
 
@@ -135,7 +139,7 @@ public class Excavation {
         }
 
         if (LoadProperties.spoutEnabled) {
-            SpoutStuff.playSoundForPlayer(SoundEffect.POP, player, block.getLocation());
+            SpoutSounds.playSoundForPlayer(SoundEffect.POP, player, block.getLocation());
         }
     }
 }
