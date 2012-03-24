@@ -13,7 +13,6 @@ import com.gmail.nossr50.datatypes.SkillType;
 import com.gmail.nossr50.locale.mcLocale;
 
 public class Unarmed {
-<<<<<<< HEAD
 	
 	public static void unarmedBonus(Player attacker, EntityDamageByEntityEvent event)
 	{
@@ -57,8 +56,6 @@ public class Unarmed {
     		}
 		}
 	}
-}
-=======
 
     /**
      * Apply bonus to Unarmed damage.
@@ -121,4 +118,3 @@ public class Unarmed {
         }
     }
 }
->>>>>>> upstream/master
