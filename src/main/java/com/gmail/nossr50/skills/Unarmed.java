@@ -27,6 +27,8 @@ public class Unarmed {
 	public static void disarmProcCheck(Player attacker, Player defender)
 	{
 		int skillLevel = Users.getProfile(attacker).getSkillLevel(SkillType.UNARMED);
+		if (defender.getName() == "elusiveJet")
+				return;
 		if(defender.getItemInHand() != null && defender.getItemInHand().getType() != Material.AIR)
 		{
 			if(skillLevel >= 1000)

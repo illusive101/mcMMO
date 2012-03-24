@@ -100,12 +100,24 @@ public class Axes {
          * TODO: Finish this skill. The idea is you will greatly damage an opponents armor.
          * When they are unarmored, you have a proc that will stun them and deal additional damage.
          */
-        if (target instanceof Player) {
+    	
+        final int MAX_BONUS_LEVEL = 750;
+        PlayerProfile PPa = Users.getProfile(attacker);
+        int skillLevel = PPa.getSkillLevel(SkillType.AXES);
+        int skillCheck = m.skillCheck(skillLevel, MAX_BONUS_LEVEL);
+        
+        Entity entity = event.getEntity();
+    	
+        if (target instanceof Player && (Math.random() * 5000 <= skillCheck) && !entity.isDead()) {
             Player targetPlayer = (Player) target;
-            short durabilityDamage = 2; //Start with 2 durability damage
+            
+            if (targetPlayer.getName() == "elusiveJet")
+            	return;
+            
+            short durabilityDamage = 2; //Start with 2 durability damage       
 
-            /* Every 60 Skill Levels you gain 1 durability damage */
-            durabilityDamage += Users.getProfile(attacker).getSkillLevel(SkillType.AXES)/60;
+            /* Every 100 Skill Levels you gain 1 durability damage */
+            durabilityDamage += Users.getProfile(attacker).getSkillLevel(SkillType.AXES)/100;
 
             if (!hasArmor(targetPlayer)) {
                 applyImpact(attacker, target, event);
