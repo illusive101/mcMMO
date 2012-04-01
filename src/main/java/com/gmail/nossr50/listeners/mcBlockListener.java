@@ -157,6 +157,7 @@ public class mcBlockListener implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
+    	
         Player player = event.getPlayer();
         PlayerProfile PP = Users.getProfile(player);
         Block block = event.getBlock();
@@ -191,7 +192,7 @@ public class mcBlockListener implements Listener {
 
         if (mcPermissions.getInstance().mining(player) && Mining.canBeSuperBroken(mat)) {
             if (LoadProperties.miningrequirespickaxe && ItemChecks.isMiningPick(inhand)) {
-                Mining.miningBlockCheck(player, block);
+                return;
             }
             else if (!LoadProperties.miningrequirespickaxe) {
                 Mining.miningBlockCheck(player, block);

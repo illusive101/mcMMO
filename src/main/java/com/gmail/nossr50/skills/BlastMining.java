@@ -81,6 +81,10 @@ public class BlastMining {
      * @param event Event whose explosion is being processed
      */
     public static void dropProcessing(Player player, EntityExplodeEvent event) {
+    	
+    	if(event.isCancelled())
+    		return;
+    	
         final int RANK_1_LEVEL = 125;
         final int RANK_2_LEVEL = 250;
         final int RANK_3_LEVEL = 375;

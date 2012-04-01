@@ -52,11 +52,14 @@ public class mcEntityListener implements Listener {
      *
      * @param event The event to monitor
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event instanceof FakeEntityDamageByEntityEvent) {
             return;
         }
+        
+        if (event.isCancelled())
+        	return;
 
         Entity defender = event.getEntity();
         Entity attacker = event.getDamager();
@@ -92,7 +95,10 @@ public class mcEntityListener implements Listener {
         if (event instanceof FakeEntityDamageEvent) {
             return;
         }
-
+        
+        if (event.isCancelled())
+        	return;
+        
         Entity entity = event.getEntity();
         EntityType type = entity.getType();
         DamageCause cause = event.getCause();
@@ -195,7 +201,7 @@ public class mcEntityListener implements Listener {
      *
      * @param event The event to monitor
      */
-    @EventHandler (priority = EventPriority.LOW)
+    @EventHandler (priority = EventPriority.HIGHEST)
     public void onEnitityExplode(EntityExplodeEvent event) {
         Entity entity = event.getEntity();
 

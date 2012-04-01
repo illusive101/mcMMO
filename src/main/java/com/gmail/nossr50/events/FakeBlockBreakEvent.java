@@ -1,15 +1,15 @@
-package com.gmail.nossr50.events;
-
-import java.util.ArrayList;
+package com.gmail.nossr50.events.fake;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.inventory.ItemStack;
 
+/**
+* Called when mcMMO breaks a block due to a special ability.
+*/
 public class FakeBlockBreakEvent extends BlockBreakEvent {
 
-	public FakeBlockBreakEvent(Block theBlock, Player player) {
-		super(theBlock, player, new ArrayList<ItemStack>(theBlock.getDrops()));
-	}
+    public FakeBlockBreakEvent(Block theBlock, Player player) {
+        super(theBlock, player);
+    }
 }

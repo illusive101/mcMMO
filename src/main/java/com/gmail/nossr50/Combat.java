@@ -286,7 +286,7 @@ public class Combat {
         int damageAmount = 0;
 
         if (type.equals(SkillType.AXES)) {
-            damageAmount = damage;
+            damageAmount = damage / 2;
         }
         else if (type.equals(SkillType.SWORDS)) {
             damageAmount = damage / 4;
