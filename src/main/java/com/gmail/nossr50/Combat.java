@@ -76,6 +76,8 @@ public class Combat {
 					applyAbilityAoE(attacker, target, event.getDamage(),
 							plugin, SkillType.SWORDS);
 				}
+				
+				Swords.slowCheck(attacker,event);
 
 				startGainXp(attacker, PPa, target, SkillType.SWORDS, plugin);
 			} else if (ItemChecks.isAxe(itemInHand)
@@ -329,7 +331,7 @@ public class Combat {
 		int damageAmount = 0;
 
 		if (type.equals(SkillType.AXES)) {
-			damageAmount = damage / 2;
+			damageAmount = damage / 4;
 		} else if (type.equals(SkillType.SWORDS)) {
 			damageAmount = damage / 4;
 		}
