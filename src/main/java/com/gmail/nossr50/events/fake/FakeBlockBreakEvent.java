@@ -5,8 +5,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 
 /**
-* Called when mcMMO breaks a block due to a special ability.
-*/
+ * Called when mcMMO breaks a block due to a special ability.
+ */
 public class FakeBlockBreakEvent extends BlockBreakEvent {
 
     public FakeBlockBreakEvent(Block theBlock, Player player) {

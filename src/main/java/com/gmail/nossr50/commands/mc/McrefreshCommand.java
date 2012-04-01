@@ -9,7 +9,9 @@ import org.bukkit.entity.Player;
 import com.gmail.nossr50.Users;
 import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.mcPermissions;
+import com.gmail.nossr50.datatypes.AbilityType;
 import com.gmail.nossr50.datatypes.PlayerProfile;
+import com.gmail.nossr50.datatypes.ToolType;
 import com.gmail.nossr50.locale.mcLocale;
 
 public class McrefreshCommand implements CommandExecutor {
@@ -23,7 +25,7 @@ public class McrefreshCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
 		if (!(sender instanceof Player)) {
-			sender.sendMessage("This command does not support console useage.");
+			sender.sendMessage("This command does not support console useage."); //TODO: Needs more locale.
 			return true;
 		}
 
@@ -35,7 +37,7 @@ public class McrefreshCommand implements CommandExecutor {
 			return true;
 		}
 		if (args.length >= 1 && (plugin.getServer().getPlayer(args[0]) != null)) {
-			player.sendMessage("You have refreshed " + args[0] + "'s cooldowns!");
+			player.sendMessage("You have refreshed " + args[0] + "'s cooldowns!"); //TODO: Needs more locale.
 			player = plugin.getServer().getPlayer(args[0]);
 		}
 
@@ -44,21 +46,20 @@ public class McrefreshCommand implements CommandExecutor {
 		 */
 		PP = Users.getProfile(player);
 		PP.setRecentlyHurt((long) 0);
-		PP.setHoePreparationMode(false);
-		PP.setAxePreparationMode(false);
-		PP.setFistsPreparationMode(false);
-		PP.setSwordsPreparationMode(false);
-		PP.setPickaxePreparationMode(false);
-
+		PP.setToolPreparationMode(ToolType.AXE, false);
+		PP.setToolPreparationMode(ToolType.FISTS, false);
+		PP.setToolPreparationMode(ToolType.HOE, false);
+		PP.setToolPreparationMode(ToolType.PICKAXE, false);
+		PP.setToolPreparationMode(ToolType.SWORD, false);
 
 		//RESET COOLDOWNS
 		PP.resetCooldowns();
-		PP.setGreenTerraMode(false);
-		PP.setGigaDrillBreakerMode(false);
-		PP.setSerratedStrikesMode(false);
-		PP.setSuperBreakerMode(false);
-		PP.setTreeFellerMode(false);
-		PP.setBerserkMode(false);
+		PP.setAbilityMode(AbilityType.GREEN_TERRA, false);
+		PP.setAbilityMode(AbilityType.GIGA_DRILL_BREAKER, false);
+		PP.setAbilityMode(AbilityType.SERRATED_STRIKES, false);
+		PP.setAbilityMode(AbilityType.SUPER_BREAKER, false);
+		PP.setAbilityMode(AbilityType.TREE_FELLER, false);
+		PP.setAbilityMode(AbilityType.BERSERK, false);
 
 		player.sendMessage(mcLocale.getString("mcPlayerListener.AbilitiesRefreshed"));
 

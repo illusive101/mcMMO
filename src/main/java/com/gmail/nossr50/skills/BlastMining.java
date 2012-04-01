@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -25,6 +26,8 @@ import com.gmail.nossr50.locale.mcLocale;
 
 public class BlastMining {
 
+    private static Random random = new Random();
+
     /**
      * Handler for what blocks drop from the explosion.
      *
@@ -43,7 +46,7 @@ public class BlastMining {
         while (iterator2.hasNext()) {
             Block temp = iterator2.next();
 
-            if ((float) Math.random() < (yield + oreBonus)) {
+            if (random.nextFloat() < (yield + oreBonus)) {
                 blocksDropped.add(temp);
                 Mining.miningDrops(temp);
 
@@ -66,7 +69,7 @@ public class BlastMining {
             while (iterator3.hasNext()) {
                 Block temp = iterator3.next();
 
-                if ((float) Math.random() < (yield - debrisReduction))
+                if (random.nextFloat() < (yield - debrisReduction))
                     Mining.miningDrops(temp);
             }
         }
@@ -258,7 +261,7 @@ public class BlastMining {
         Block block = player.getTargetBlock(transparent, BLOCKS_AWAY);
 
         if (block.getType().equals(Material.TNT) && m.blockBreakSimulate(block, player, true) && PP.getSkillLevel(SkillType.MINING) >= 125) {
-            final int MAX_DISTANCE_AWAY = 10;
+            final double MAX_DISTANCE_AWAY = 10.0;
             AbilityType ability = AbilityType.BLAST_MINING;
 
             /* Check Cooldown */
@@ -283,7 +286,7 @@ public class BlastMining {
             tnt.setFuseTicks(0);
 
             PP.setSkillDATS(ability, System.currentTimeMillis()); //Save DATS for Blast Mining
-            PP.setBlastMiningInformed(false);
+            PP.setAbilityInformed(ability, false);
         }
     }
 }

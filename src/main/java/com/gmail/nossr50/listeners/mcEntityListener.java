@@ -30,8 +30,8 @@ import com.gmail.nossr50.mcPermissions;
 import com.gmail.nossr50.config.LoadProperties;
 import com.gmail.nossr50.datatypes.PlayerProfile;
 import com.gmail.nossr50.datatypes.SkillType;
-import com.gmail.nossr50.events.FakeEntityDamageByEntityEvent;
-import com.gmail.nossr50.events.FakeEntityDamageEvent;
+import com.gmail.nossr50.events.fake.FakeEntityDamageByEntityEvent;
+import com.gmail.nossr50.events.fake.FakeEntityDamageEvent;
 import com.gmail.nossr50.party.Party;
 import com.gmail.nossr50.runnables.mcBleedTimer;
 import com.gmail.nossr50.skills.Acrobatics;
@@ -57,9 +57,6 @@ public class mcEntityListener implements Listener {
         if (event instanceof FakeEntityDamageByEntityEvent) {
             return;
         }
-        
-        if (event.isCancelled())
-        	return;
 
         Entity defender = event.getEntity();
         Entity attacker = event.getDamager();
@@ -80,7 +77,9 @@ public class mcEntityListener implements Listener {
             LivingEntity livingDefender = (LivingEntity)defender;
 
             if (!m.isInvincible(livingDefender, event)) {
-                Combat.combatChecks(event, plugin);
+            	//Make sure event isn't cancelled before trying to proc?
+            	if(!event.isCancelled())
+            		Combat.combatChecks(event, plugin);
             }
         }
     }
@@ -95,9 +94,6 @@ public class mcEntityListener implements Listener {
         if (event instanceof FakeEntityDamageEvent) {
             return;
         }
-        
-        if (event.isCancelled())
-        	return;
         
         Entity entity = event.getEntity();
         EntityType type = entity.getType();
@@ -158,7 +154,7 @@ public class mcEntityListener implements Listener {
         Archery.arrowRetrievalCheck(x, plugin);
 
         if (x instanceof Player) {
-            Users.getProfile((Player)x).setBleedTicks(0);
+            Users.getProfile((Player)x).resetBleedTicks();
         }
     }
 
@@ -313,7 +309,7 @@ public class mcEntityListener implements Listener {
                 break;
             }
 
-            PP.addXP(SkillType.TAMING, xp, player);
+            PP.addXP(SkillType.TAMING, xp);
             Skills.XpCheckSkill(SkillType.TAMING, player);
         }
     }

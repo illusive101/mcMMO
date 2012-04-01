@@ -1,5 +1,7 @@
 package com.gmail.nossr50.skills;
 
+import java.util.Random;
+
 import org.bukkit.Bukkit;
 import org.bukkit.CropState;
 import org.bukkit.Location;
@@ -15,12 +17,15 @@ import com.gmail.nossr50.m;
 import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.mcPermissions;
 import com.gmail.nossr50.config.LoadProperties;
+import com.gmail.nossr50.datatypes.AbilityType;
 import com.gmail.nossr50.datatypes.PlayerProfile;
 import com.gmail.nossr50.datatypes.SkillType;
 import com.gmail.nossr50.locale.mcLocale;
 import com.gmail.nossr50.runnables.GreenThumbTimer;
 
 public class Herbalism {
+
+    private static Random random = new Random();
 
     /**
      * Activate the Green Terra ability.
@@ -34,7 +39,7 @@ public class Herbalism {
         Material type = block.getType();
 
         if (!hasSeeds) {
-            player.sendMessage("You need more seeds to spread Green Terra");
+            player.sendMessage("You need more seeds to spread Green Terra");  //TODO: Needs more locale.
         }
         else if (hasSeeds && !block.getType().equals(Material.WHEAT)) {
             inventory.removeItem(new ItemStack(Material.SEEDS));
@@ -137,7 +142,7 @@ public class Herbalism {
                 if (b.getType().equals(Material.CACTUS)) {
                     mat = Material.CACTUS;
                     if (!b.hasMetadata("mcmmoPlacedBlock")) {
-                        if(herbLevel > MAX_BONUS_LEVEL || (Math.random() * 1000 <= herbLevel)) {
+                        if (herbLevel > MAX_BONUS_LEVEL || random.nextInt(1000) <= herbLevel) {
                             catciDrops++;
                         }
                         xp += LoadProperties.mcactus;
@@ -193,7 +198,7 @@ public class Herbalism {
                 if (b.getType().equals(Material.SUGAR_CANE_BLOCK)) {
                     mat = Material.SUGAR_CANE;
                     if (!b.hasMetadata("mcmmoPlacedBlock")) {
-                        if(herbLevel > MAX_BONUS_LEVEL || (Math.random() * 1000 <= herbLevel)) {
+                        if (herbLevel > MAX_BONUS_LEVEL || random.nextInt(1000) <= herbLevel) {
                             caneDrops++;
                         }
                         xp += LoadProperties.msugar;
@@ -226,7 +231,7 @@ public class Herbalism {
         else {
             ItemStack is = new ItemStack(mat);
 
-            if (herbLevel > MAX_BONUS_LEVEL || (Math.random() * 1000 <= herbLevel)) {
+            if (herbLevel > MAX_BONUS_LEVEL || random.nextInt(1000) <= herbLevel) {
                 if (type.equals(Material.CACTUS)) {
                     m.mcDropItems(loc, is, catciDrops);
                 }
@@ -246,7 +251,7 @@ public class Herbalism {
                 }
             }
 
-            PP.addXP(SkillType.HERBALISM, xp, player);
+            PP.addXP(SkillType.HERBALISM, xp);
             Skills.XpCheckSkill(SkillType.HERBALISM, player);
         }
     }
@@ -268,7 +273,7 @@ public class Herbalism {
         boolean hasSeeds = inventory.contains(Material.SEEDS);
         Location loc = block.getLocation();
 
-        if (hasSeeds && PP.getGreenTerraMode() || hasSeeds && (herbLevel > MAX_BONUS_LEVEL || (Math.random() * 1500 <= herbLevel))) {
+        if (hasSeeds && PP.getAbilityMode(AbilityType.GREEN_TERRA) || hasSeeds && (herbLevel > MAX_BONUS_LEVEL || random.nextInt(1500) <= herbLevel)) {
             event.setCancelled(true);
 
             m.mcDropItem(loc, new ItemStack(Material.WHEAT));
@@ -297,7 +302,7 @@ public class Herbalism {
 
         player.setItemInHand(new ItemStack(Material.SEEDS, seeds - 1));
 
-        if (skillLevel > MAX_BONUS_LEVEL || Math.random() * 1500 <= skillLevel) {
+        if (skillLevel > MAX_BONUS_LEVEL || random.nextInt(1500) <= skillLevel) {
             greenTerra(player, block);
         }
         else {

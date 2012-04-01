@@ -1,6 +1,7 @@
 package com.gmail.nossr50.skills;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.bukkit.Material;
 import org.bukkit.TreeSpecies;
@@ -9,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Tree;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.Bukkit;
 
 import com.gmail.nossr50.Combat;
@@ -19,12 +19,15 @@ import com.gmail.nossr50.mcPermissions;
 import com.gmail.nossr50.config.LoadProperties;
 import com.gmail.nossr50.datatypes.PlayerProfile;
 import com.gmail.nossr50.datatypes.SkillType;
+import com.gmail.nossr50.events.fake.FakePlayerAnimationEvent;
 import com.gmail.nossr50.locale.mcLocale;
 import com.gmail.nossr50.spout.SpoutSounds;
 
 import org.getspout.spoutapi.sound.SoundEffect;
 
 public class WoodCutting {
+
+    private static Random random = new Random();
 
     /**
      * Handle the Tree Feller ability.
@@ -55,7 +58,7 @@ public class WoodCutting {
             return;
         }
 
-        int durabilityLoss = toBeFelled.size();
+        int durabilityLoss = durabilityLossCalulate(toBeFelled);
         int xp = 0;
         ItemStack inHand = player.getItemInHand();
 
@@ -69,7 +72,7 @@ public class WoodCutting {
             int health = player.getHealth();
 
             if (health >= 2) {
-                Combat.dealDamage(player, (int)(Math.random() * (health - 1)));
+                Combat.dealDamage(player, random.nextInt(health - 1));
             }
             return;
         }
@@ -153,7 +156,7 @@ public class WoodCutting {
             }
         }
 
-        PP.addXP(SkillType.WOODCUTTING, xp, player); //Tree Feller gives nerf'd XP
+        PP.addXP(SkillType.WOODCUTTING, xp); //Tree Feller gives nerf'd XP
         Skills.XpCheckSkill(SkillType.WOODCUTTING, player);
     }
 
@@ -210,8 +213,10 @@ public class WoodCutting {
             if (!isTooAggressive(currentBlock, zNegative) && treeFellerCompatible(zNegative) && !toBeFelled.contains(zNegative)) {
                 processTreeFelling(zNegative, toBeFelled);
             }
+        }
 
-            if (treeFellerCompatible(yPositive) && !toBeFelled.contains(yPositive)) {
+        if (treeFellerCompatible(yPositive)) {
+            if(!currentBlock.hasMetadata("mcmmoPlacedBlock") && !toBeFelled.contains(yPositive)) {
                 processTreeFelling(yPositive, toBeFelled);
             }
         }
@@ -249,7 +254,7 @@ public class WoodCutting {
         byte type = block.getData();
         Material mat = Material.getMaterial(block.getTypeId());
 
-        if ((skillLevel > MAX_SKILL_LEVEL || Math.random() * 1000 <= skillLevel) && mcPermissions.getInstance().woodcuttingDoubleDrops(player)) {
+        if ((skillLevel > MAX_SKILL_LEVEL || random.nextInt(1000) <= skillLevel) && mcPermissions.getInstance().woodcuttingDoubleDrops(player)) {
             ItemStack item = new ItemStack(mat, 1, (short) 0, type);
             m.mcDropItem(block.getLocation(), item);
         }
@@ -292,7 +297,7 @@ public class WoodCutting {
         }
 
         WoodCutting.woodCuttingProcCheck(player, block);
-        PP.addXP(SkillType.WOODCUTTING, xp, player);
+        PP.addXP(SkillType.WOODCUTTING, xp);
         Skills.XpCheckSkill(SkillType.WOODCUTTING, player);
     }
 
@@ -303,7 +308,7 @@ public class WoodCutting {
      * @param block Block being broken
      */
     public static void leafBlower(Player player, Block block) {
-        PlayerAnimationEvent armswing = new PlayerAnimationEvent(player);
+        FakePlayerAnimationEvent armswing = new FakePlayerAnimationEvent(player);
         Bukkit.getPluginManager().callEvent(armswing);
 
         if (LoadProperties.woodcuttingrequiresaxe) {
@@ -313,5 +318,17 @@ public class WoodCutting {
         if (LoadProperties.spoutEnabled) {
             SpoutSounds.playSoundForPlayer(SoundEffect.POP, player, block.getLocation());
         }
+    }
+
+    private static int durabilityLossCalulate(ArrayList<Block> toBeFelled) {
+        int durabilityLoss = 0;
+        for (Block x : toBeFelled) {
+            if (x.getType().equals(Material.LOG)) {
+                durabilityLoss++;
+                durabilityLoss = durabilityLoss + LoadProperties.abilityDurabilityLoss;
+            }
+        }
+
+        return durabilityLoss;
     }
 }

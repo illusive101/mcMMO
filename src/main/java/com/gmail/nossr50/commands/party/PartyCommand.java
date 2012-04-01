@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import com.gmail.nossr50.Users;
 import com.gmail.nossr50.mcPermissions;
 import com.gmail.nossr50.datatypes.PlayerProfile;
+import com.gmail.nossr50.events.party.McMMOPartyChangeEvent;
+import com.gmail.nossr50.events.party.McMMOPartyChangeEvent.EventReason;
 import com.gmail.nossr50.locale.mcLocale;
 import com.gmail.nossr50.party.Party;
 
@@ -18,7 +20,7 @@ public class PartyCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
 		if (!(sender instanceof Player)) {
-			sender.sendMessage("This command does not support console useage.");
+			sender.sendMessage("This command does not support console useage."); //TODO: Needs more locale.
 			return true;
 		}
 
@@ -37,9 +39,9 @@ public class PartyCommand implements CommandExecutor {
 		}
 
 		if (args.length == 0 && !PP.inParty()) {
-			player.sendMessage(mcLocale.getString("Party.Help1", new Object[] { "/party "}));
-			player.sendMessage(mcLocale.getString("Party.Help2", new Object[] { "/party "}));
-			player.sendMessage(mcLocale.getString("Party.Help3", new Object[] { "/party " }));
+			player.sendMessage(mcLocale.getString("Party.Help1", new Object[] { "party "}));
+			player.sendMessage(mcLocale.getString("Party.Help2", new Object[] { "party "}));
+			player.sendMessage(mcLocale.getString("Party.Help3", new Object[] { "party " }));
 			return true;
 		} else if (args.length == 0 && PP.inParty()) {
 			String tempList = "";
@@ -109,18 +111,26 @@ public class PartyCommand implements CommandExecutor {
 			return true;
 		} else if (args.length == 1) {
 			if (args[0].equals("q") && PP.inParty()) {
-				Pinstance.removeFromParty(player, PP);
 
+                McMMOPartyChangeEvent event = new McMMOPartyChangeEvent(player, PP.getParty(), null, EventReason.LEFT_PARTY);
+                Bukkit.getPluginManager().callEvent(event);
+
+                if (event.isCancelled()) {
+                    return true;
+                }
+
+				Pinstance.removeFromParty(player, PP);
 				player.sendMessage(mcLocale.getString("mcPlayerListener.LeftParty"));
 				return true;
+
 			} else if (args[0].equalsIgnoreCase("?")) {
-				player.sendMessage(mcLocale.getString("Party.Help4", new Object[] { "/party " }));
-				player.sendMessage(mcLocale.getString("Party.Help2", new Object[] { "/party " }));
-				player.sendMessage(mcLocale.getString("Party.Help5", new Object[] { "/party " }));
-				player.sendMessage(mcLocale.getString("Party.Help6", new Object[] { "/party " }));
-				player.sendMessage(mcLocale.getString("Party.Help7", new Object[] { "/party " }));
-				player.sendMessage(mcLocale.getString("Party.Help8", new Object[] { "/party " }));
-				player.sendMessage(mcLocale.getString("Party.Help9", new Object[] { "/party " }));
+				player.sendMessage(mcLocale.getString("Party.Help4", new Object[] { "party " }));
+				player.sendMessage(mcLocale.getString("Party.Help2", new Object[] { "party " }));
+				player.sendMessage(mcLocale.getString("Party.Help5", new Object[] { "party " }));
+				player.sendMessage(mcLocale.getString("Party.Help6", new Object[] { "party " }));
+				player.sendMessage(mcLocale.getString("Party.Help7", new Object[] { "party " }));
+				player.sendMessage(mcLocale.getString("Party.Help8", new Object[] { "party " }));
+				player.sendMessage(mcLocale.getString("Party.Help9", new Object[] { "party " }));
 			} else if (args[0].equalsIgnoreCase("lock")) {
 				if (PP.inParty()) {
 					if (Pinstance.isPartyLeader(player.getName(), PP.getParty())) {
@@ -148,7 +158,22 @@ public class PartyCommand implements CommandExecutor {
 				// Pinstance.dump(player);
 			} else {
 				if (PP.inParty()) {
+				    McMMOPartyChangeEvent event = new McMMOPartyChangeEvent(player, PP.getParty(), args[0], EventReason.CHANGED_PARTIES);
+				    Bukkit.getPluginManager().callEvent(event);
+
+				    if (event.isCancelled()) {
+				        return true;
+				    }
+
 					Pinstance.removeFromParty(player, PP);
+				}
+				else {
+                    McMMOPartyChangeEvent event = new McMMOPartyChangeEvent(player, null, args[0], EventReason.JOINED_PARTY);
+                    Bukkit.getPluginManager().callEvent(event);
+
+                    if (event.isCancelled()) {
+                        return true;
+                    }
 				}
 				Pinstance.addToParty(player, PP, args[0], false);
 				return true;
@@ -186,6 +211,13 @@ public class PartyCommand implements CommandExecutor {
 							}
 							PlayerProfile tPP = Users.getProfile(tPlayer);
 
+			                McMMOPartyChangeEvent event = new McMMOPartyChangeEvent(player, tPP.getParty(), null, EventReason.KICKED_FROM_PARTY);
+			                Bukkit.getPluginManager().callEvent(event);
+
+			                if (event.isCancelled()) {
+			                    return true;
+			                }
+
 							Pinstance.removeFromParty(tPlayer, tPP);
 
 							tPlayer.sendMessage(mcLocale.getString("mcPlayerListener.LeftParty"));
@@ -213,10 +245,22 @@ public class PartyCommand implements CommandExecutor {
 					player.sendMessage(mcLocale.getString("Party.NotOwner"));
 				}
 			} else {
+                McMMOPartyChangeEvent event = new McMMOPartyChangeEvent(player, PP.getParty(), args[0], EventReason.CHANGED_PARTIES);
+                Bukkit.getPluginManager().callEvent(event);
+
+                if (event.isCancelled()) {
+                    return true;
+                }
 				Pinstance.removeFromParty(player, PP);
 				Pinstance.addToParty(player, PP, args[0], false, args[1]);
 			}
 		} else if (args.length == 2 && !PP.inParty()) {
+            McMMOPartyChangeEvent event = new McMMOPartyChangeEvent(player, null, args[0], EventReason.JOINED_PARTY);
+            Bukkit.getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                return true;
+            }
 			Pinstance.addToParty(player, PP, args[0], false, args[1]);
 		}
 

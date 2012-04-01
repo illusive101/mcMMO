@@ -1,14 +1,18 @@
 package com.gmail.nossr50.skills;
 
 import java.util.Map;
+import java.util.Random;
 import java.util.Map.Entry;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.getspout.spoutapi.SpoutManager;
+import org.getspout.spoutapi.player.SpoutPlayer;
 
 import com.gmail.nossr50.ItemChecks;
 import com.gmail.nossr50.Users;
@@ -18,9 +22,12 @@ import com.gmail.nossr50.config.LoadProperties;
 import com.gmail.nossr50.spout.SpoutSounds;
 import com.gmail.nossr50.datatypes.PlayerProfile;
 import com.gmail.nossr50.datatypes.SkillType;
+import com.gmail.nossr50.events.skills.McMMOPlayerRepairCheckEvent;
 import com.gmail.nossr50.locale.mcLocale;
 
 public class Repair {
+
+    private static Random random = new Random();
 
     /**
      * Handle all the item repair checks.
@@ -41,23 +48,19 @@ public class Repair {
              */
             if (ItemChecks.isArmor(is) && LoadProperties.repairArmor && mcPermissions.getInstance().armorRepair(player)) {
                 if (ItemChecks.isDiamondArmor(is) && inventory.contains(LoadProperties.rDiamond) && skillLevel >= LoadProperties.repairdiamondlevel && mcPermissions.getInstance().diamondRepair(player)) {
-                    inventory.removeItem(new ItemStack(LoadProperties.rDiamond));
-                    repairItem(player, is);
+                    repairItem(player, is, new ItemStack(LoadProperties.rDiamond));
                     xpHandler(player, PP, is, durabilityBefore, 6, true);
                 }
                 else if (ItemChecks.isIronArmor(is) && inventory.contains(LoadProperties.rIron) && skillLevel >= LoadProperties.repairIronLevel && mcPermissions.getInstance().ironRepair(player)) {
-                    inventory.removeItem(new ItemStack(LoadProperties.rIron));
-                    repairItem(player, is);
+                    repairItem(player, is, new ItemStack(LoadProperties.rIron));
                     xpHandler(player, PP, is, durabilityBefore, 2, true);
                 }
                 else if (ItemChecks.isGoldArmor(is) && inventory.contains(LoadProperties.rGold) && skillLevel >= LoadProperties.repairGoldLevel && mcPermissions.getInstance().goldRepair(player)) {
-                    inventory.removeItem(new ItemStack(LoadProperties.rGold));
-                    repairItem(player, is);
+                    repairItem(player, is, new ItemStack(LoadProperties.rGold));
                     xpHandler(player, PP, is, durabilityBefore, 4, true);
                 }
                 else if (ItemChecks.isLeatherArmor(is) && inventory.contains(LoadProperties.rLeather)) {
-                    inventory.removeItem(new ItemStack(LoadProperties.rLeather));
-                    repairItem(player, is);
+                    repairItem(player, is, new ItemStack(LoadProperties.rLeather));
                     xpHandler(player, PP, is, durabilityBefore, 1, true);
                 }
                 else {
@@ -70,33 +73,27 @@ public class Repair {
              */
             else if (ItemChecks.isTool(is) && LoadProperties.repairTools && mcPermissions.getInstance().toolRepair(player)) {
                 if (ItemChecks.isStoneTool(is) && inventory.contains(LoadProperties.rStone) && skillLevel >= LoadProperties.repairStoneLevel && mcPermissions.getInstance().stoneRepair(player)) {
-                    inventory.removeItem(new ItemStack(LoadProperties.rStone));
-                    repairItem(player, is);
+                    repairItem(player, is, new ItemStack(LoadProperties.rStone));
                     xpHandler(player, PP, is, durabilityBefore, 2, false);
                 }
                 else if (ItemChecks.isWoodTool(is) && inventory.contains(LoadProperties.rWood)) {
-                    inventory.removeItem(new ItemStack(LoadProperties.rWood));
-                    repairItem(player, is);
+                    repairItem(player, is, new ItemStack(LoadProperties.rWood));
                     xpHandler(player, PP, is, durabilityBefore, 2, false);
                 }
                 else if (ItemChecks.isIronTool(is) && inventory.contains(LoadProperties.rIron) && skillLevel >= LoadProperties.repairIronLevel && mcPermissions.getInstance().ironRepair(player)) {
-                    inventory.removeItem(new ItemStack(LoadProperties.rIron));
-                    repairItem(player, is);
+                    repairItem(player, is, new ItemStack(LoadProperties.rIron));
                     xpHandler(player, PP, is, durabilityBefore, 1, true);
                 }
                 else if (ItemChecks.isDiamondTool(is) && inventory.contains(LoadProperties.rDiamond) && skillLevel >= LoadProperties.repairdiamondlevel && mcPermissions.getInstance().diamondRepair(player)) {
-                    inventory.removeItem(new ItemStack(LoadProperties.rDiamond));
-                    repairItem(player, is);
+                    repairItem(player, is, new ItemStack(LoadProperties.rDiamond));
                     xpHandler(player, PP, is, durabilityBefore, 1, true);
                 }
                 else if (ItemChecks.isGoldTool(is) && inventory.contains(LoadProperties.rGold) && skillLevel >= LoadProperties.repairGoldLevel && mcPermissions.getInstance().goldRepair(player)) {
-                    inventory.removeItem(new ItemStack(LoadProperties.rGold));
-                    repairItem(player, is);
+                    repairItem(player, is, new ItemStack(LoadProperties.rGold));
                     xpHandler(player, PP, is, durabilityBefore, 8, true);
                 }
                 else if (is.getType().equals(Material.BOW) && inventory.contains(LoadProperties.rString)){
-                    inventory.removeItem(new ItemStack(LoadProperties.rString));
-                    repairItem(player, is);
+                    repairItem(player, is, new ItemStack(LoadProperties.rString));
                     xpHandler(player, PP, is, durabilityBefore, 2, false);
                 }
                 else {
@@ -140,7 +137,7 @@ public class Repair {
             dif = (short) (dif / 2);
         }
 
-        PP.addXP(SkillType.REPAIR, dif*10, player);
+        PP.addXP(SkillType.REPAIR, dif * 10);
         Skills.XpCheckSkill(SkillType.REPAIR, player);
 
         //CLANG CLANG
@@ -201,11 +198,11 @@ public class Repair {
         for (Entry<Enchantment, Integer> enchant : enchants.entrySet()) {
             Enchantment enchantment = enchant.getKey();
 
-            if (Math.random() * 100 <= getEnchantChance(rank)) {
+            if (random.nextInt(100) <= getEnchantChance(rank)) {
                 int enchantLevel = enchant.getValue();
 
                 if (LoadProperties.mayDowngradeEnchants && enchantLevel > 1) {
-                    if (Math.random() * 100 <= getDowngradeChance(rank)) {
+                    if (random.nextInt(100) <= getDowngradeChance(rank)) {
                         is.addEnchantment(enchantment, enchantLevel--);
                         downgraded = true;
                     }
@@ -410,7 +407,7 @@ public class Repair {
 
         int skillLevel = Users.getProfile(player).getSkillLevel(SkillType.REPAIR);
 
-        if ((skillLevel > MAX_BONUS_LEVEL || (Math.random() * 1000 <= skillLevel)) && mcPermissions.getInstance().repairBonus(player)) {
+        if ((skillLevel > MAX_BONUS_LEVEL || random.nextInt(1000) <= skillLevel) && mcPermissions.getInstance().repairBonus(player)) {
             player.sendMessage(mcLocale.getString("Skills.FeltEasy"));
             return true;
         }
@@ -422,16 +419,70 @@ public class Repair {
      * Repairs an item.
      *
      * @param player The player repairing an item
-     * @param enchants The enchantments on the item
-     * @param enchantsLevel The level of the enchantments on the item
+     * @param item The item being repaired
+     * @param repairMaterial The repair reagent
      */
-    public static void repairItem(Player player, ItemStack is) {
+    public static void repairItem(Player player, ItemStack item, ItemStack repairMaterial) {
+        short initialDurability = item.getDurability();
+        short newDurability = getRepairAmount(item, player);
+        PlayerInventory inventory = player.getInventory();
+
+        McMMOPlayerRepairCheckEvent preEvent = new McMMOPlayerRepairCheckEvent(player, (short) (initialDurability - newDurability), repairMaterial, item);
+        Bukkit.getPluginManager().callEvent(preEvent);
+
+        if (preEvent.isCancelled()) {
+            return;
+        }
+
+        if (repairMaterial.getType().equals(Material.WOOD)) {
+            removeWood(inventory);
+        }
+        else {
+            inventory.removeItem(repairMaterial);
+        }
 
         /* Handle the enchants */
         if (LoadProperties.mayLoseEnchants && !mcPermissions.getInstance().arcaneBypass(player)) {
-            addEnchants(player, is);
+            addEnchants(player, item);
         }
 
-        is.setDurability(getRepairAmount(is, player));
+        item.setDurability(newDurability);
+    }
+
+    /**
+     * Handles notifications for placing an anvil.
+     *
+     * @param player The player placing the anvil
+     * @param anvilID The item ID of the anvil block
+     */
+    public static void placedAnvilCheck(Player player, int anvilID) {
+        PlayerProfile PP = Users.getProfile(player);
+
+        if (!PP.getPlacedAnvil()) {
+            if (LoadProperties.spoutEnabled) {
+                SpoutPlayer sPlayer = SpoutManager.getPlayer(player);
+
+                if (sPlayer.isSpoutCraftEnabled()) {
+                    sPlayer.sendNotification("[mcMMO] Anvil Placed", "Right click to repair!", Material.getMaterial(anvilID)); //TODO: Use Locale
+                }
+            }
+            else {
+                player.sendMessage(mcLocale.getString("mcBlockListener.PlacedAnvil"));
+            }
+
+            PP.togglePlacedAnvil();
+        }
+    }
+
+    /**
+     * Removes wood from a player's inventory on repair. Needed due to wood having multiple possible data values.
+     *
+     * @param inventory The inventory to remove wood from
+     */
+    private static void removeWood(PlayerInventory inventory) {
+        //TODO: Make this less hackish once there's a better way to do it...
+        int slot = inventory.first(Material.WOOD);
+        ItemStack item = inventory.getItem(slot);
+        item.setAmount(item.getAmount() - 1);
     }
 }

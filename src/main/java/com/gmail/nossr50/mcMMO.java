@@ -1,7 +1,6 @@
 package com.gmail.nossr50;
 
 import com.gmail.nossr50.datatypes.PlayerProfile;
-import com.gmail.nossr50.datatypes.SkillType;
 import com.gmail.nossr50.commands.skills.*;
 import com.gmail.nossr50.commands.spout.*;
 import com.gmail.nossr50.commands.mc.*;
@@ -9,8 +8,6 @@ import com.gmail.nossr50.commands.party.*;
 import com.gmail.nossr50.commands.general.*;
 import com.gmail.nossr50.config.*;
 import com.gmail.nossr50.runnables.*;
-import com.gmail.nossr50.skills.Skills;
-import com.gmail.nossr50.spout.SpoutStuff;
 import com.gmail.nossr50.listeners.mcBlockListener;
 import com.gmail.nossr50.listeners.mcEntityListener;
 import com.gmail.nossr50.listeners.mcPlayerListener;
@@ -18,16 +15,13 @@ import com.gmail.nossr50.locale.mcLocale;
 import com.gmail.nossr50.party.Party;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
@@ -40,8 +34,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.getspout.spoutapi.SpoutManager;
-import org.getspout.spoutapi.player.FileManager;
 
 public class mcMMO extends JavaPlugin {
 
@@ -109,12 +101,7 @@ public class mcMMO extends JavaPlugin {
 
         PluginManager pm = getServer().getPluginManager();
 
-        if (pm.getPlugin("Spout") != null) {
-            LoadProperties.spoutEnabled = true;
-        }
-        else {
-            LoadProperties.spoutEnabled = false;
-        }
+        Bukkit.getScheduler().scheduleSyncDelayedTask(this, new SpoutStart(this), 20); //Schedule Spout Activation 1 second after start-up
 
         //Register events
         pm.registerEvents(playerListener, this);
@@ -149,16 +136,6 @@ public class mcMMO extends JavaPlugin {
 
         registerCommands();
 
-        //Spout Stuff
-        if (LoadProperties.spoutEnabled) {
-            SpoutStuff.setupSpoutConfigs();
-            SpoutStuff.registerCustomEvent();
-            SpoutStuff.extractFiles(); //Extract source materials
-
-            FileManager FM = SpoutManager.getFileManager();
-            FM.addToPreLoginCache(this, SpoutStuff.getFiles());
-        }
-
         if (LoadProperties.statsTracking) {
             //Plugin Metrics running in a new thread
             new Thread(new Runnable() {
@@ -188,111 +165,6 @@ public class mcMMO extends JavaPlugin {
      */
     public PlayerProfile getPlayerProfile(Player player) {
         return Users.getProfile(player);
-    }
-
-    /**
-     * Check the XP of a player.
-     * </br>
-     * This function is designed for API usage.
-     *
-     * @param player
-     * @param skillType
-     */
-    public void checkXp(Player player, SkillType skillType) {
-        if (skillType == SkillType.ALL) {
-            Skills.XpCheckAll(player);
-        }
-        else {
-            Skills.XpCheckSkill(skillType, player);
-        }
-    }
-
-    /**
-     * Check if two players are in the same party.
-     * </br>
-     * This function is designed for API usage.
-     *
-     * @param playera The first player to check
-     * @param playerb The second player to check
-     * @return true if the two players are in the same party, false otherwise
-     */
-    public boolean inSameParty(Player playera, Player playerb) {
-        if (Users.getProfile(playera).inParty() && Users.getProfile(playerb).inParty()) {
-            if (Users.getProfile(playera).getParty().equals(Users.getProfile(playerb).getParty())) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-        else {
-            return false;
-        }
-    }
-
-    /**
-     * Get a list of all current party names.
-     * </br>
-     * This function is designed for API usage.
-     *
-     * @return the list of parties.
-     */
-    public ArrayList<String> getParties() {
-        String location = "plugins/mcMMO/mcmmo.users";
-        ArrayList<String> parties = new ArrayList<String>();
-
-        try {
-
-            //Open the users file
-            FileReader file = new FileReader(location);
-            BufferedReader in = new BufferedReader(file);
-            String line = "";
-
-            while((line = in.readLine()) != null) {
-                String[] character = line.split(":");
-                String theparty = null;
-
-                //Party
-                if (character.length > 3) {
-                    theparty = character[3];
-                }
-
-                if (!parties.contains(theparty)) {
-                    parties.add(theparty);
-                }
-            }
-            in.close();
-        }
-        catch (Exception e) {
-            Bukkit.getLogger().severe("Exception while reading " + location + " (Are you sure you formatted it correctly?)" + e.toString());
-        }
-        return parties;
-    }
-
-    /**
-     * Get the name of the party a player is in.
-     * </br>
-     * This function is designed for API usage.
-     *
-     * @param player The player to check the party name of
-     * @return the name of the player's party
-     */
-    public static String getPartyName(Player player) {
-        PlayerProfile PP = Users.getProfile(player);
-        return PP.getParty();
-    }
-
-    /**
-     * Checks if a player is in a party.
-     * </br>
-     * This function is designed for API usage.
-     *
-     * @param player The player to check
-     * @return true if the player is in a party, false otherwise
-     */
-    public static boolean inParty(Player player) {
-        PlayerProfile PP = Users.getProfile(player);
-        return PP.inParty();
     }
 
     /**

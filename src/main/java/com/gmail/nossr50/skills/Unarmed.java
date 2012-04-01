@@ -1,5 +1,7 @@
 package com.gmail.nossr50.skills;
 
+import java.util.Random;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -13,65 +15,84 @@ import com.gmail.nossr50.datatypes.SkillType;
 import com.gmail.nossr50.locale.mcLocale;
 
 public class Unarmed {
-	
-    /**
-     * Apply bonus to Unarmed damage.
-     *
-     * @param PPa Profile of the attacking player
-     * @param event The event to modify
-     */
-    public static void unarmedBonus(PlayerProfile PPa, EntityDamageByEntityEvent event) {
-        final int MAX_BONUS = 8;
-        int bonus = 3;
 
-        bonus += PPa.getSkillLevel(SkillType.UNARMED) / 50; //Add 1 DMG for every 50 skill levels
+	private static Random random = new Random();
 
-        if (bonus > MAX_BONUS) {
-            bonus = MAX_BONUS;
-        }
+	/**
+	 * Apply bonus to Unarmed damage.
+	 * 
+	 * @param PPa
+	 *            Profile of the attacking player
+	 * @param event
+	 *            The event to modify
+	 */
+	public static void unarmedBonus(PlayerProfile PPa,
+			EntityDamageByEntityEvent event) {
+		final int MAX_BONUS = 8;
+		int bonus = 3;
 
-        event.setDamage(event.getDamage() + bonus);
-    }
-	
-    /**
-     * Check for disarm.
-     *
-     * @param PPa Profile of the attacking player
-     * @param defender The defending player
-     */
-    public static void disarmProcCheck(PlayerProfile PPa, Player defender) {
-        final int MAX_BONUS_LEVEL = 1000;
+		bonus += PPa.getSkillLevel(SkillType.UNARMED) / 50; // Add 1 DMG for
+															// every 50 skill
+															// levels
 
-        int skillLevel = PPa.getSkillLevel(SkillType.UNARMED);
-        int skillCheck = m.skillCheck(skillLevel, MAX_BONUS_LEVEL);
+		if (bonus > MAX_BONUS) {
+			bonus = MAX_BONUS;
+		}
 
-        if (!defender.getItemInHand().getType().equals(Material.AIR)) {
-            if (Math.random() * 5000 <= skillCheck) {
-                ItemStack item = defender.getItemInHand();
+		event.setDamage(event.getDamage() + bonus);
+	}
 
-                defender.sendMessage(mcLocale.getString("Skills.Disarmed"));
+	/**
+	 * Check for disarm.
+	 * 
+	 * @param PPa
+	 *            Profile of the attacking player
+	 * @param defender
+	 *            The defending player
+	 */
+	public static void disarmProcCheck(PlayerProfile PPa, Player defender) {
+		final int MAX_BONUS_LEVEL = 1000;
 
-                m.mcDropItem(defender.getLocation(), item);
-                defender.setItemInHand(new ItemStack(Material.AIR));
-            }
-        }
-    }
+		int skillLevel = PPa.getSkillLevel(SkillType.UNARMED);
+		int skillCheck = m.skillCheck(skillLevel, MAX_BONUS_LEVEL);
 
-    /**
-     * Check for arrow deflection.
-     *
-     * @param defender The defending player
-     * @param event The event to modify
-     */
-    public static void deflectCheck(Player defender, EntityDamageByEntityEvent event) {
-        final int MAX_BONUS_LEVEL = 1000;
+		if (!defender.getItemInHand().getType().equals(Material.AIR)) {
+			if (Math.random() * 5000 <= skillCheck) {
+				ItemStack inHand = defender.getItemInHand();
 
-        int skillLevel = Users.getProfile(defender).getSkillLevel(SkillType.UNARMED);
-        int skillCheck = m.skillCheck(skillLevel, MAX_BONUS_LEVEL);
+				if (!inHand.getType().equals(Material.AIR)) {
+					if (random.nextInt(5000) <= skillCheck) {
+						defender.sendMessage(mcLocale
+								.getString("Skills.Disarmed"));
 
-        if (Math.random() * 2000 <= skillCheck && mcPermissions.getInstance().deflect(defender)) {
-            event.setCancelled(true);
-            defender.sendMessage(mcLocale.getString("Combat.ArrowDeflect"));
-        }
-    }
+						m.mcDropItem(defender.getLocation(), inHand);
+						defender.setItemInHand(new ItemStack(Material.AIR));
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Check for arrow deflection.
+	 * 
+	 * @param defender
+	 *            The defending player
+	 * @param event
+	 *            The event to modify
+	 */
+	public static void deflectCheck(Player defender,
+			EntityDamageByEntityEvent event) {
+		final int MAX_BONUS_LEVEL = 1000;
+
+		int skillLevel = Users.getProfile(defender).getSkillLevel(
+				SkillType.UNARMED);
+		int skillCheck = m.skillCheck(skillLevel, MAX_BONUS_LEVEL);
+
+		if (random.nextInt(2000) <= skillCheck
+				&& mcPermissions.getInstance().deflect(defender)) {
+			event.setCancelled(true);
+			defender.sendMessage(mcLocale.getString("Combat.ArrowDeflect"));
+		}
+	}
 }
