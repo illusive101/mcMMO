@@ -32,7 +32,7 @@ public class Herbalism {
      *
      * @param player The player activating the ability
      * @param block The block to be changed by Green Terra
-     */
+     
     public static void greenTerra(Player player, Block block) {
         PlayerInventory inventory = player.getInventory();
         boolean hasSeeds = inventory.contains(Material.SEEDS);
@@ -58,7 +58,7 @@ public class Herbalism {
             }
         }
     }
-
+	*/
     /**
      * Check if a block can be made mossy.
      *
@@ -82,7 +82,7 @@ public class Herbalism {
      *
      * @param type The type of Block to check
      * @return true if the block is affected, false otherwise
-     */
+     
     public static Boolean canBeGreenTerra(Material type){
         switch (type) {
         case BROWN_MUSHROOM:
@@ -103,6 +103,7 @@ public class Herbalism {
             return false;
         }
     }
+    */
 
     /**
      * Check for extra Herbalism drops.
@@ -273,7 +274,7 @@ public class Herbalism {
         boolean hasSeeds = inventory.contains(Material.SEEDS);
         Location loc = block.getLocation();
 
-        if (hasSeeds && PP.getAbilityMode(AbilityType.GREEN_TERRA) || hasSeeds && (herbLevel > MAX_BONUS_LEVEL || random.nextInt(1500) <= herbLevel)) {
+        if (hasSeeds && (herbLevel > MAX_BONUS_LEVEL || random.nextInt(1500) <= herbLevel)) {
             event.setCancelled(true);
 
             m.mcDropItem(loc, new ItemStack(Material.WHEAT));
@@ -301,12 +302,13 @@ public class Herbalism {
         int seeds = is.getAmount();
 
         player.setItemInHand(new ItemStack(Material.SEEDS, seeds - 1));
-
+        /* No MOARE green terra :D
         if (skillLevel > MAX_BONUS_LEVEL || random.nextInt(1500) <= skillLevel) {
             greenTerra(player, block);
         }
         else {
             player.sendMessage(mcLocale.getString("mcPlayerListener.GreenThumbFail"));
         }
+        */
     }
 }

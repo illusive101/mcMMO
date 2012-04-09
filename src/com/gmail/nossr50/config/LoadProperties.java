@@ -55,9 +55,8 @@ public class LoadProperties extends ConfigLoader {
 
 	/* Cooldowns */
 	public static int superBreakerCooldown, blastMiningCooldown,
-			greenTerraCooldown, gigaDrillBreakerCooldown, treeFellerCooldown,
-			berserkCooldown, serratedStrikeCooldown, skullSplitterCooldown,
-			grimStrikeCooldown;
+			gigaDrillBreakerCooldown, treeFellerCooldown, berserkCooldown,
+			serratedStrikeCooldown, skullSplitterCooldown, grimStrikeCooldown;
 
 	/* Thresholds */
 	public static int treeFellerThreshold;
@@ -344,8 +343,10 @@ public class LoadProperties extends ConfigLoader {
 		enableOnlyActivateWhenSneaking = config.getBoolean(
 				"Abilities.Activation.Only_Activate_When_Sneaking", false);
 
+		/*
 		greenTerraCooldown = config.getInt("Abilities.Cooldowns.Green_Terra",
 				240);
+		*/
 		superBreakerCooldown = config.getInt(
 				"Abilities.Cooldowns.Super_Breaker", 240);
 		gigaDrillBreakerCooldown = config.getInt(

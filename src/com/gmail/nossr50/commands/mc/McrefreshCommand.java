@@ -54,7 +54,7 @@ public class McrefreshCommand implements CommandExecutor {
 
 		//RESET COOLDOWNS
 		PP.resetCooldowns();
-		PP.setAbilityMode(AbilityType.GREEN_TERRA, false);
+		//PP.setAbilityMode(AbilityType.GREEN_TERRA, false);
 		PP.setAbilityMode(AbilityType.GIGA_DRILL_BREAKER, false);
 		PP.setAbilityMode(AbilityType.SERRATED_STRIKES, false);
 		PP.setAbilityMode(AbilityType.SUPER_BREAKER, false);

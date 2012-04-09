@@ -13,11 +13,11 @@ public enum SkillType {
     AXES(AbilityType.SKULL_SPLIITER, LoadProperties.levelCapAxes, ToolType.AXE, LoadProperties.axesxpmodifier),
     EXCAVATION(AbilityType.GIGA_DRILL_BREAKER, LoadProperties.levelCapExcavation, ToolType.SHOVEL, LoadProperties.excavationxpmodifier),
     FISHING(LoadProperties.levelCapFishing, LoadProperties.fishingxpmodifier),
-    HERBALISM(AbilityType.GREEN_TERRA, LoadProperties.levelCapHerbalism, ToolType.HOE, LoadProperties.herbalismxpmodifier),
+    //HERBALISM(AbilityType.GREEN_TERRA, LoadProperties.levelCapHerbalism, ToolType.HOE, LoadProperties.herbalismxpmodifier),
     MINING(AbilityType.SUPER_BREAKER, LoadProperties.levelCapMining, ToolType.PICKAXE, LoadProperties.miningxpmodifier),
     REPAIR(LoadProperties.levelCapRepair, LoadProperties.repairxpmodifier),
     SWORDS(AbilityType.SERRATED_STRIKES, LoadProperties.levelCapSwords, ToolType.SWORD, LoadProperties.swordsxpmodifier),
-    SCYTHES(AbilityType.GRIM_STRIKE, LoadProperties.levelCapAxes, ToolType.AXE, LoadProperties.axesxpmodifier),
+    SCYTHES(AbilityType.GRIM_STRIKE, LoadProperties.levelCapScythes, ToolType.AXE, LoadProperties.hoexpmodifier),
     TAMING(LoadProperties.levelCapTaming, LoadProperties.tamingxpmodifier),
     UNARMED(AbilityType.BERSERK, LoadProperties.levelCapUnarmed, ToolType.FISTS, LoadProperties.unarmedxpmodifier),
     WOODCUTTING(AbilityType.TREE_FELLER, LoadProperties.levelCapWoodcutting, ToolType.AXE, LoadProperties.woodcuttingxpmodifier);

@@ -39,14 +39,13 @@ public class PlayerProfile {
 	private boolean partyChatMode = false, partyChatOnly = false,
 			adminChatMode = false;
 	private boolean godMode = false;
-	private boolean greenTerraMode, treeFellerMode, superBreakerMode,
-			gigaDrillBreakerMode, serratedStrikesMode, skullSplitterMode,
-			berserkMode, grimStrikesMode;
-	private boolean greenTerraInformed = true, berserkInformed = true,
-			skullSplitterInformed = true, gigaDrillBreakerInformed = true,
-			superBreakerInformed = true, blastMiningInformed = true,
-			serratedStrikesInformed = true, treeFellerInformed = true,
-			grimStrikesInformed = true;
+	private boolean treeFellerMode, superBreakerMode, gigaDrillBreakerMode,
+			serratedStrikesMode, skullSplitterMode, berserkMode,
+			grimStrikesMode;
+	private boolean berserkInformed = true, skullSplitterInformed = true,
+			gigaDrillBreakerInformed = true, superBreakerInformed = true,
+			blastMiningInformed = true, serratedStrikesInformed = true,
+			treeFellerInformed = true, grimStrikesInformed = true;
 	private boolean hoePreparationMode = false, shovelPreparationMode = false,
 			swordsPreparationMode = false, fistsPreparationMode = false,
 			pickaxePreparationMode = false, axePreparationMode = false;
@@ -190,8 +189,9 @@ public class PlayerProfile {
 						Integer.valueOf(cooldowns.get(1).get(1)));
 				skillsDATS.put(AbilityType.BERSERK,
 						Integer.valueOf(cooldowns.get(1).get(2)));
-				skillsDATS.put(AbilityType.GREEN_TERRA,
+				/*skillsDATS.put(AbilityType.GREEN_TERRA,
 						Integer.valueOf(cooldowns.get(1).get(3)));
+						*/
 				skillsDATS.put(AbilityType.GIGA_DRILL_BREAKER,
 						Integer.valueOf(cooldowns.get(1).get(4)));
 				skillsDATS.put(AbilityType.SERRATED_STRIKES,
@@ -365,9 +365,10 @@ public class PlayerProfile {
 				if (character.length > 28)
 					skillsDATS.put(AbilityType.TREE_FELLER,
 							Integer.valueOf(character[28]));
-				if (character.length > 29)
+				/*if (character.length > 29)
 					skillsDATS.put(AbilityType.GREEN_TERRA,
 							Integer.valueOf(character[29]));
+							*/
 				if (character.length > 30)
 					skillsDATS.put(AbilityType.SERRATED_STRIKES,
 							Integer.valueOf(character[30]));
@@ -436,8 +437,7 @@ public class PlayerProfile {
 					+ skillsDATS.get(AbilityType.GRIM_STRIKE)
 					+ ", woodcutting = "
 					+ skillsDATS.get(AbilityType.TREE_FELLER) + ", unarmed = "
-					+ skillsDATS.get(AbilityType.BERSERK) + ", herbalism = "
-					+ skillsDATS.get(AbilityType.GREEN_TERRA)
+					+ skillsDATS.get(AbilityType.BERSERK)
 					+ ", excavation = "
 					+ skillsDATS.get(AbilityType.GIGA_DRILL_BREAKER)
 					+ ", swords = "
@@ -593,47 +593,47 @@ public class PlayerProfile {
 			FileWriter file = new FileWriter(location, true);
 			BufferedWriter out = new BufferedWriter(file);
 
-            //Add the player to the end
-            out.append(playerName + ":");
-            out.append(0 + ":"); //mining
-            out.append(""+":");
-            out.append(party+":");
-            out.append(0+":"); //XP
-            out.append(0+":"); //woodcutting
-            out.append(0+":"); //woodCuttingXP
-            out.append(0+":"); //repair
-            out.append(0+":"); //unarmed
-            out.append(0+":"); //herbalism
-            out.append(0+":"); //excavation
-            out.append(0+":"); //archery
-            out.append(0+":"); //swords
-            out.append(0+":"); //axes
-            out.append(0+":"); //acrobatics
-            out.append(0+":"); //repairXP
-            out.append(0+":"); //unarmedXP
-            out.append(0+":"); //herbalismXP
-            out.append(0+":"); //excavationXP
-            out.append(0+":"); //archeryXP
-            out.append(0+":"); //swordsXP
-            out.append(0+":"); //axesXP
-            out.append(0+":"); //acrobaticsXP
-            out.append(""+":");
-            out.append(0+":"); //taming
-            out.append(0+":"); //tamingXP
-            out.append(0+":"); //DATS
-            out.append(0+":"); //DATS
-            out.append(0+":"); //DATS
-            out.append(0+":"); //DATS
-            out.append(0+":"); //DATS
-            out.append(0+":"); //DATS
-            out.append(0+":"); //DATS
-            out.append(LoadProperties.defaulthud.toString()+":");//HUD
-            out.append(0+":"); //Fishing
-            out.append(0+":"); //FishingXP
-            out.append(0+":"); //Blast Mining
-			out.append(0+":"); // DATS
-			out.append(0+":"); // scythesXP
-			out.append(0+":"); // scythes
+			// Add the player to the end
+			out.append(playerName + ":");
+			out.append(0 + ":"); // mining
+			out.append("" + ":");
+			out.append(party + ":");
+			out.append(0 + ":"); // XP
+			out.append(0 + ":"); // woodcutting
+			out.append(0 + ":"); // woodCuttingXP
+			out.append(0 + ":"); // repair
+			out.append(0 + ":"); // unarmed
+			out.append(0 + ":"); // herbalism
+			out.append(0 + ":"); // excavation
+			out.append(0 + ":"); // archery
+			out.append(0 + ":"); // swords
+			out.append(0 + ":"); // axes
+			out.append(0 + ":"); // acrobatics
+			out.append(0 + ":"); // repairXP
+			out.append(0 + ":"); // unarmedXP
+			out.append(0 + ":"); // herbalismXP
+			out.append(0 + ":"); // excavationXP
+			out.append(0 + ":"); // archeryXP
+			out.append(0 + ":"); // swordsXP
+			out.append(0 + ":"); // axesXP
+			out.append(0 + ":"); // acrobaticsXP
+			out.append("" + ":");
+			out.append(0 + ":"); // taming
+			out.append(0 + ":"); // tamingXP
+			out.append(0 + ":"); // DATS
+			out.append(0 + ":"); // DATS
+			out.append(0 + ":"); // DATS
+			out.append(0 + ":"); // DATS
+			out.append(0 + ":"); // DATS
+			out.append(0 + ":"); // DATS
+			out.append(0 + ":"); // DATS
+			out.append(LoadProperties.defaulthud.toString() + ":");// HUD
+			out.append(0 + ":"); // Fishing
+			out.append(0 + ":"); // FishingXP
+			out.append(0 + ":"); // Blast Mining
+			out.append(0 + ":"); // DATS
+			out.append(0 + ":"); // scythesXP
+			out.append(0 + ":"); // scythes
 
 			// Add more in the same format as the line above
 
@@ -929,8 +929,10 @@ public class PlayerProfile {
 		case GIGA_DRILL_BREAKER:
 			return gigaDrillBreakerMode;
 
+		/*
 		case GREEN_TERRA:
 			return greenTerraMode;
+		*/
 
 		case SKULL_SPLIITER:
 			return skullSplitterMode;
@@ -971,9 +973,11 @@ public class PlayerProfile {
 			gigaDrillBreakerMode = bool;
 			break;
 
+			/*
 		case GREEN_TERRA:
 			greenTerraMode = bool;
 			break;
+			*/
 
 		case SKULL_SPLIITER:
 			skullSplitterMode = bool;
@@ -1017,8 +1021,10 @@ public class PlayerProfile {
 		case GIGA_DRILL_BREAKER:
 			return gigaDrillBreakerInformed;
 
+			/*
 		case GREEN_TERRA:
 			return greenTerraInformed;
+			*/
 
 		case SKULL_SPLIITER:
 			return skullSplitterInformed;
@@ -1063,9 +1069,11 @@ public class PlayerProfile {
 			gigaDrillBreakerInformed = bool;
 			break;
 
+			/*
 		case GREEN_TERRA:
 			greenTerraInformed = bool;
 			break;
+			*/
 
 		case SKULL_SPLIITER:
 			skullSplitterInformed = bool;

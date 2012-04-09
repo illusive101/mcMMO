@@ -205,10 +205,6 @@ public class mcPermissions {
         return player.hasPermission("mcmmo.ability.herbalism.doubledrops");
     }
 
-    public boolean greenTerra(Player player) {
-        return player.hasPermission("mcmmo.ability.herbalism.greenterra");
-    }
-
     public boolean greenThumbBlocks(Player player) {
         return player.hasPermission("mcmmo.ability.herbalism.greenthumbblocks");
     }

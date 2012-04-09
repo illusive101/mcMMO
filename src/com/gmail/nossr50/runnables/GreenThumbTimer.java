@@ -22,6 +22,7 @@ public class GreenThumbTimer implements Runnable {
         block.setType(Material.CROPS);
 
         //This replants the wheat at a certain stage in development based on Herbalism Skill
+        /*
         if (!PP.getAbilityMode(AbilityType.GREEN_TERRA)) {
             if (PP.getSkillLevel(SkillType.HERBALISM) >= 600) {
                 block.setData(CropState.MEDIUM.getData());
@@ -36,8 +37,7 @@ public class GreenThumbTimer implements Runnable {
                 block.setData(CropState.GERMINATED.getData());
             }
         }
-        else {
+        */
             block.setData(CropState.MEDIUM.getData());
-        }
     }
 }
