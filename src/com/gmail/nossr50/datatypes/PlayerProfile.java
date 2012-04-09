@@ -48,7 +48,8 @@ public class PlayerProfile {
 			treeFellerInformed = true, grimStrikesInformed = true;
 	private boolean hoePreparationMode = false, shovelPreparationMode = false,
 			swordsPreparationMode = false, fistsPreparationMode = false,
-			pickaxePreparationMode = false, axePreparationMode = false;
+			pickaxePreparationMode = false, axePreparationMode = false,
+			scythePreparationMode = false;
 	private boolean abilityuse = true;
 
 	/* Timestamps */
@@ -189,9 +190,6 @@ public class PlayerProfile {
 						Integer.valueOf(cooldowns.get(1).get(1)));
 				skillsDATS.put(AbilityType.BERSERK,
 						Integer.valueOf(cooldowns.get(1).get(2)));
-				/*skillsDATS.put(AbilityType.GREEN_TERRA,
-						Integer.valueOf(cooldowns.get(1).get(3)));
-						*/
 				skillsDATS.put(AbilityType.GIGA_DRILL_BREAKER,
 						Integer.valueOf(cooldowns.get(1).get(4)));
 				skillsDATS.put(AbilityType.SERRATED_STRIKES,
@@ -365,10 +363,9 @@ public class PlayerProfile {
 				if (character.length > 28)
 					skillsDATS.put(AbilityType.TREE_FELLER,
 							Integer.valueOf(character[28]));
-				/*if (character.length > 29)
-					skillsDATS.put(AbilityType.GREEN_TERRA,
+				if (character.length > 29)
+					skillsDATS.put(AbilityType.GRIM_STRIKE,
 							Integer.valueOf(character[29]));
-							*/
 				if (character.length > 30)
 					skillsDATS.put(AbilityType.SERRATED_STRIKES,
 							Integer.valueOf(character[30]));
@@ -394,15 +391,12 @@ public class PlayerProfile {
 				if (character.length > 36)
 					skillsDATS.put(AbilityType.BLAST_MINING,
 							Integer.valueOf(character[36]));
-				if (character.length > 37)
-					skillsDATS.put(AbilityType.GRIM_STRIKE,
+				if (character.length > 37 && m.isInt(character[37]))
+					skillsXp.put(SkillType.SCYTHES,
 							Integer.valueOf(character[37]));
 				if (character.length > 38 && m.isInt(character[38]))
-					skillsXp.put(SkillType.SCYTHES,
-							Integer.valueOf(character[38]));
-				if (character.length > 39 && m.isInt(character[39]))
 					skills.put(SkillType.SCYTHES,
-							Integer.valueOf(character[39]));
+							Integer.valueOf(character[38]));
 				in.close();
 				loaded = true;
 				return true;
@@ -437,8 +431,7 @@ public class PlayerProfile {
 					+ skillsDATS.get(AbilityType.GRIM_STRIKE)
 					+ ", woodcutting = "
 					+ skillsDATS.get(AbilityType.TREE_FELLER) + ", unarmed = "
-					+ skillsDATS.get(AbilityType.BERSERK)
-					+ ", excavation = "
+					+ skillsDATS.get(AbilityType.BERSERK) + ", excavation = "
 					+ skillsDATS.get(AbilityType.GIGA_DRILL_BREAKER)
 					+ ", swords = "
 					+ skillsDATS.get(AbilityType.SERRATED_STRIKES)
@@ -524,7 +517,7 @@ public class PlayerProfile {
 						writer.append(skills.get(SkillType.TAMING) + ":");
 						writer.append(skillsXp.get(SkillType.TAMING) + ":");
 						// Need to store the DATS of abilities nao
-						// Berserk, Gigadrillbreaker, Tree Feller, Green Terra,
+						// Berserk, Gigadrillbreaker, Tree Feller, Grim Strikes,
 						// Serrated Strikes, Skull Splitter, Super Breaker
 						writer.append(String.valueOf(skillsDATS
 								.get(AbilityType.BERSERK)) + ":");
@@ -533,7 +526,7 @@ public class PlayerProfile {
 						writer.append(String.valueOf(skillsDATS
 								.get(AbilityType.TREE_FELLER)) + ":");
 						writer.append(String.valueOf(skillsDATS
-								.get(AbilityType.GREEN_TERRA)) + ":");
+								.get(AbilityType.GRIM_STRIKE)) + ":");
 						writer.append(String.valueOf(skillsDATS
 								.get(AbilityType.SERRATED_STRIKES)) + ":");
 						writer.append(String.valueOf(skillsDATS
@@ -545,8 +538,6 @@ public class PlayerProfile {
 						writer.append(skillsXp.get(SkillType.FISHING) + ":");
 						writer.append(String.valueOf(skillsDATS
 								.get(AbilityType.BLAST_MINING)) + ":");
-						writer.append(String.valueOf(skillsDATS
-								.get(AbilityType.GRIM_STRIKE)) + ":");
 						writer.append(skillsXp.get(SkillType.SCYTHES) + ":");
 						writer.append(skills.get(SkillType.SCYTHES) + ":");
 						writer.append("\r\n");
@@ -631,7 +622,6 @@ public class PlayerProfile {
 			out.append(0 + ":"); // Fishing
 			out.append(0 + ":"); // FishingXP
 			out.append(0 + ":"); // Blast Mining
-			out.append(0 + ":"); // DATS
 			out.append(0 + ":"); // scythesXP
 			out.append(0 + ":"); // scythes
 
@@ -830,6 +820,9 @@ public class PlayerProfile {
 		case HOE:
 			return hoePreparationMode;
 
+		case SCYTHE:
+			return scythePreparationMode;
+
 		case PICKAXE:
 			return pickaxePreparationMode;
 
@@ -864,6 +857,10 @@ public class PlayerProfile {
 
 		case HOE:
 			hoePreparationMode = bool;
+			break;
+			
+		case SCYTHE:
+			scythePreparationMode = bool;
 			break;
 
 		case PICKAXE:
@@ -929,11 +926,6 @@ public class PlayerProfile {
 		case GIGA_DRILL_BREAKER:
 			return gigaDrillBreakerMode;
 
-		/*
-		case GREEN_TERRA:
-			return greenTerraMode;
-		*/
-
 		case SKULL_SPLIITER:
 			return skullSplitterMode;
 
@@ -972,12 +964,6 @@ public class PlayerProfile {
 		case GIGA_DRILL_BREAKER:
 			gigaDrillBreakerMode = bool;
 			break;
-
-			/*
-		case GREEN_TERRA:
-			greenTerraMode = bool;
-			break;
-			*/
 
 		case SKULL_SPLIITER:
 			skullSplitterMode = bool;
@@ -1020,11 +1006,6 @@ public class PlayerProfile {
 
 		case GIGA_DRILL_BREAKER:
 			return gigaDrillBreakerInformed;
-
-			/*
-		case GREEN_TERRA:
-			return greenTerraInformed;
-			*/
 
 		case SKULL_SPLIITER:
 			return skullSplitterInformed;
@@ -1069,14 +1050,12 @@ public class PlayerProfile {
 			gigaDrillBreakerInformed = bool;
 			break;
 
-			/*
-		case GREEN_TERRA:
-			greenTerraInformed = bool;
-			break;
-			*/
-
 		case SKULL_SPLIITER:
 			skullSplitterInformed = bool;
+			break;
+
+		case GRIM_STRIKE:
+			grimStrikesInformed = bool;
 			break;
 
 		case TREE_FELLER:

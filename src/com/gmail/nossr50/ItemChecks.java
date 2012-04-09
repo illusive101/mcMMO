@@ -44,6 +44,26 @@ public class ItemChecks {
             return false;
         }
     }
+    
+    /**
+     * Checks if the item is a scythe.
+     *
+     * @param is Item to check
+     * @return true if the item is a hoe, false otherwise
+     */
+    public static boolean isScythe(ItemStack is) {
+    	switch (is.getType()) {
+    	case DIAMOND_HOE:
+    	case GOLD_HOE:
+    	case IRON_HOE:
+    	case STONE_HOE:
+    	case WOOD_HOE:
+    		return true;
+    		
+    	default:
+    		return false;
+    	}
+    }
 
     /**
      * Checks if the item is a shovel.

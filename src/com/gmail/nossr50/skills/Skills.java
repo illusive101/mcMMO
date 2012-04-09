@@ -82,17 +82,17 @@ public class Skills {
         if (LoadProperties.enableOnlyActivateWhenSneaking && !player.isSneaking()) {
             return;
         }
-
+        
         PlayerProfile PP = Users.getProfile(player);
         AbilityType ability = skill.getAbility();
         ToolType tool = skill.getTool();
         ItemStack inHand = player.getItemInHand();
-
+        
         /* Check if any abilities are active */
         if (!PP.getAbilityUse()) {
             return;
         }
-
+        
         for (AbilityType x : AbilityType.values()) {
             if (PP.getAbilityMode(x)) {
                 return;
@@ -112,6 +112,7 @@ public class Skills {
                 PP.setToolPreparationMode(tool, true);
             }
         }
+       
         else if (ability.getPermissions(player) && tool.inHand(inHand) && !PP.getToolPreparationMode(tool)) {
             if (!PP.getAbilityMode(ability) && !cooldownOver(PP.getSkillDATS(ability) * TIME_CONVERSION_FACTOR, ability.getCooldown())) {
                 player.sendMessage(mcLocale.getString("Skills.TooTired") + ChatColor.YELLOW + " (" + calculateTimeLeft(PP.getSkillDATS(ability) * TIME_CONVERSION_FACTOR, ability.getCooldown()) + "s)");
@@ -447,14 +448,6 @@ public class Skills {
                 break;
             }
             /* FALLS THROUGH */
-
-        /*case GREEN_TERRA:
-            if (!ability.blockCheck(block.getType())) {
-                activate = false;
-                break;
-            }
-            break;
-            */
 
         default:
             activate = false;

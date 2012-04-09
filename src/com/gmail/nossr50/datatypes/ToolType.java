@@ -8,6 +8,7 @@ import com.gmail.nossr50.locale.mcLocale;
 
 public enum ToolType {
     AXE(mcLocale.getString("Skills.LowerAxe"), mcLocale.getString("Skills.ReadyAxe")),
+    SCYTHE(mcLocale.getString("Skills.LowerHoe"), mcLocale.getString("Skills.ReadyHoe")),
     FISTS(mcLocale.getString("Skills.LowerFists"), mcLocale.getString("Skills.ReadyFists")),
     HOE(mcLocale.getString("Skills.LowerHoe"), mcLocale.getString("Skills.ReadyHoe")),
     PICKAXE(mcLocale.getString("Skills.LowerPickAxe"), mcLocale.getString("Skills.ReadyPickAxe")),
@@ -46,6 +47,9 @@ public enum ToolType {
 
         case HOE:
             return ItemChecks.isHoe(is);
+            
+        case SCYTHE:
+        	return ItemChecks.isScythe(is);
 
         case PICKAXE:
             return ItemChecks.isMiningPick(is);

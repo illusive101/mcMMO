@@ -35,7 +35,6 @@ public class mcTimer implements Runnable
 			 */
 			Skills.monitorSkill(player, PP, curTime, SkillType.AXES);
 			Skills.monitorSkill(player, PP, curTime, SkillType.EXCAVATION);
-			Skills.monitorSkill(player, PP, curTime, SkillType.HERBALISM);
 			Skills.monitorSkill(player, PP, curTime, SkillType.MINING);
 			Skills.monitorSkill(player, PP, curTime, SkillType.SWORDS);
 			Skills.monitorSkill(player, PP, curTime, SkillType.SCYTHES);
@@ -48,7 +47,6 @@ public class mcTimer implements Runnable
 			Skills.watchCooldown(player, PP, curTime, AbilityType.SKULL_SPLIITER);
 			Skills.watchCooldown(player, PP, curTime, AbilityType.GRIM_STRIKE);
 			Skills.watchCooldown(player, PP, curTime, AbilityType.GIGA_DRILL_BREAKER);
-			//Skills.watchCooldown(player, PP, curTime, AbilityType.GREEN_TERRA);
 			Skills.watchCooldown(player, PP, curTime, AbilityType.SUPER_BREAKER);
 			Skills.watchCooldown(player, PP, curTime, AbilityType.SERRATED_STRIKES);
 			Skills.watchCooldown(player, PP, curTime, AbilityType.BERSERK);

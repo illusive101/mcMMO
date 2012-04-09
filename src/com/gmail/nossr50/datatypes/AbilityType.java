@@ -14,7 +14,6 @@ public enum AbilityType {
     BERSERK(LoadProperties.berserkCooldown, mcLocale.getString("Skills.BerserkOn"), mcLocale.getString("Skills.BerserkOff"), "Skills.BerserkPlayer", mcLocale.getString("Skills.YourBerserk"), "Skills.BerserkPlayerOff"),
     SUPER_BREAKER(LoadProperties.superBreakerCooldown, mcLocale.getString("Skills.SuperBreakerOn"), mcLocale.getString("Skills.SuperBreakerOff"), "Skills.SuperBreakerPlayer", mcLocale.getString("Skills.YourSuperBreaker"), "Skills.SuperBreakerPlayerOff"),
     GIGA_DRILL_BREAKER(LoadProperties.gigaDrillBreakerCooldown, mcLocale.getString("Skills.GigaDrillBreakerOn"), mcLocale.getString("Skills.GigaDrillBreakerOff"), "Skills.GigaDrillBreakerPlayer", mcLocale.getString("Skills.YourGigaDrillBreaker"), "Skills.GigaDrillBreakerPlayerOff"),
-    //GREEN_TERRA(LoadProperties.greenTerraCooldown, mcLocale.getString("Skills.GreenTerraOn"), mcLocale.getString("Skills.GreenTerraOff"), "Skills.GreenTerraPlayer", mcLocale.getString("Skills.YourGreenTerra"), mcLocale.getString("Skills.GreenTerraPlayerOff")),
     SKULL_SPLIITER(LoadProperties.skullSplitterCooldown, mcLocale.getString("Skills.SkullSplitterOn"), mcLocale.getString("Skills.SkullSplitterOff"), "Skills.SkullSplitterPlayer", mcLocale.getString("Skills.YourSkullSplitter"), "Skills.SkullSplitterPlayerOff"),
     GRIM_STRIKE(LoadProperties.grimStrikeCooldown, mcLocale.getString("Skills.GrimStrikeOn"), mcLocale.getString("Skills.GrimStrikeOff"), "Skills.GrimStrikesPlayer", mcLocale.getString("Skills.YourGrimStrike"), "Skills.GrimStrikesPlayerOff"),
     TREE_FELLER(LoadProperties.treeFellerCooldown, mcLocale.getString("Skills.TreeFellerOn"), mcLocale.getString("Skills.TreeFellerOff"), "Skills.TreeFellerPlayer", mcLocale.getString("Skills.YourTreeFeller"), "Skills.TreeFellerPlayerOff"),
@@ -115,11 +114,6 @@ public enum AbilityType {
 
         case GIGA_DRILL_BREAKER:
             return Excavation.canBeGigaDrillBroken(material);
-
-            /*
-        case GREEN_TERRA:
-            return Herbalism.makeMossy(material);
-            */
 
         case LEAF_BLOWER:
             return material.equals(Material.LEAVES);

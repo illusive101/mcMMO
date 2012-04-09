@@ -246,11 +246,6 @@ public class mcBlockListener implements Listener {
                 Skills.abilityCheck(player, SkillType.UNARMED);
             }
         }
-        /* TREE FELLER SOUNDS */
-        if (LoadProperties.spoutEnabled && mat.equals(Material.LOG) && PP.getAbilityMode(AbilityType.TREE_FELLER)) {
-            SpoutSounds.playSoundForPlayer(SoundEffect.FIZZ, player, block.getLocation());
-        }
-
         /*
          * ABILITY TRIGGER CHECKS
          

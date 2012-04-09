@@ -23,14 +23,22 @@ public class ScythesCommand implements CommandExecutor {
 		Player player = (Player) sender;
 		PlayerProfile PP = Users.getProfile(player);
 
-		String percentage;
+		String percentage, slow;
 
 		float skillvalue = (float) PP.getSkillLevel(SkillType.SCYTHES);
 		if (PP.getSkillLevel(SkillType.SCYTHES) < 750)
 			percentage = String.valueOf((skillvalue / 1000) * 100);
 		else
 			percentage = "75";
+		
+		int ticks = 2;
+		int x = PP.getSkillLevel(SkillType.AXES);
+		while (x >= 50) {
+			x -= 50;
+			ticks++;
+		}
 			
+		slow = String.valueOf((skillvalue / 1000) * 100);
 
 		player.sendMessage(mcLocale.getString("m.SkillHeader", new Object[] { mcLocale.getString("m.SkillScythes") }));
 		player.sendMessage(mcLocale.getString("m.XPGain", new Object[] { mcLocale.getString("m.XPGainSwords") }));
@@ -44,6 +52,8 @@ public class ScythesCommand implements CommandExecutor {
 		player.sendMessage(mcLocale.getString("m.EffectsTemplate", new Object[] { mcLocale.getString("m.EffectsScythes3_0"), mcLocale.getString("m.EffectsScythes3_1") }));
 		player.sendMessage(mcLocale.getString("m.SkillHeader", new Object[] { mcLocale.getString("m.YourStats") }));
 		player.sendMessage(mcLocale.getString("m.ScythesCritChance", new Object[] { percentage }));
+        player.sendMessage(mcLocale.getString("m.ScythesPlagueLength", new Object[] { ticks }));
+        player.sendMessage(mcLocale.getString("m.ScythesSlowChance", new Object[] { slow }));
 		
 		Page.grabGuidePageForSkill(SkillType.SCYTHES, player, args);
 

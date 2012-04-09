@@ -208,12 +208,7 @@ public class mcPlayerListener implements Listener {
 
             /* ACTIVATION CHECKS */
             if (LoadProperties.enableAbilities && BlockChecks.abilityBlockCheck(mat)) {
-                if (!mat.equals(Material.DIRT) && !mat.equals(Material.GRASS) && !mat.equals(Material.SOIL)) {
-                    Skills.activationCheck(player, SkillType.HERBALISM);
-                }
-
                 Skills.activationCheck(player, SkillType.AXES);
-                Skills.activationCheck(player, SkillType.SCYTHES);
                 Skills.activationCheck(player, SkillType.EXCAVATION);
                 Skills.activationCheck(player, SkillType.MINING);
                 Skills.activationCheck(player, SkillType.SWORDS);
@@ -245,7 +240,6 @@ public class mcPlayerListener implements Listener {
                 Skills.activationCheck(player, SkillType.AXES);
                 Skills.activationCheck(player, SkillType.SCYTHES);
                 Skills.activationCheck(player, SkillType.EXCAVATION);
-                Skills.activationCheck(player, SkillType.HERBALISM);
                 Skills.activationCheck(player, SkillType.MINING);
                 Skills.activationCheck(player, SkillType.SWORDS);
                 Skills.activationCheck(player, SkillType.UNARMED);

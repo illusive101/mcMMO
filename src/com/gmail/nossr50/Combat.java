@@ -106,9 +106,9 @@ public class Combat {
 				}
 
 				startGainXp(attacker, PPa, target, SkillType.AXES, plugin);
-			} else if (ItemChecks.isHoe(itemInHand) // SCYTHE CHECKS
+			} else if (ItemChecks.isScythe(itemInHand) // SCYTHE CHECKS
 					&& mcPermissions.getInstance().scythes(attacker)) {
-				
+
 				if (mcPermissions.getInstance().slowness(attacker)) {
 					Scythes.slowCheck(attacker, event);
 				}
@@ -200,6 +200,8 @@ public class Combat {
 			Skills.abilityCheck(attacker, SkillType.SWORDS);
 		} else if (PPa.getToolPreparationMode(ToolType.FISTS)) {
 			Skills.abilityCheck(attacker, SkillType.UNARMED);
+		} else if (PPa.getToolPreparationMode(ToolType.SCYTHE)) {
+			Skills.abilityCheck(attacker, SkillType.SCYTHES);
 		}
 	}
 
@@ -426,8 +428,11 @@ public class Combat {
 						if (type.equals(SkillType.SWORDS)) {
 							PP.addBleedTicks(5);
 						} else if (type.equals(SkillType.SCYTHES)) {
-							defender.addPotionEffect(new PotionEffect(
-									PotionEffectType.WEAKNESS, 100, 1));
+							if (!defender
+									.hasPotionEffect(PotionEffectType.WEAKNESS)) {
+								defender.addPotionEffect(new PotionEffect(
+										PotionEffectType.WEAKNESS, 100, 1));
+							}
 						}
 
 						numberOfTargets--;
