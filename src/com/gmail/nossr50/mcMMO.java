@@ -1,52 +1,87 @@
 package com.gmail.nossr50;
 
-import com.gmail.nossr50.datatypes.PlayerProfile;
-import com.gmail.nossr50.commands.skills.*;
-import com.gmail.nossr50.commands.spout.*;
-import com.gmail.nossr50.commands.mc.*;
-import com.gmail.nossr50.commands.party.*;
-import com.gmail.nossr50.commands.general.*;
-import com.gmail.nossr50.config.*;
-import com.gmail.nossr50.runnables.*;
-import com.gmail.nossr50.listeners.mcBlockListener;
-import com.gmail.nossr50.listeners.mcEntityListener;
-import com.gmail.nossr50.listeners.mcPlayerListener;
-import com.gmail.nossr50.locale.mcLocale;
-import com.gmail.nossr50.party.Party;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.scheduler.BukkitScheduler;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.getspout.commons.command.Command;
-import org.getspout.commons.command.CommandSource;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
+
+import com.gmail.nossr50.commands.general.AddlevelsCommand;
+import com.gmail.nossr50.commands.general.AddxpCommand;
+import com.gmail.nossr50.commands.general.InspectCommand;
+import com.gmail.nossr50.commands.general.McstatsCommand;
+import com.gmail.nossr50.commands.general.MmoeditCommand;
+import com.gmail.nossr50.commands.general.MmoupdateCommand;
+import com.gmail.nossr50.commands.general.XprateCommand;
+import com.gmail.nossr50.commands.mc.McabilityCommand;
+import com.gmail.nossr50.commands.mc.MccCommand;
+import com.gmail.nossr50.commands.mc.McgodCommand;
+import com.gmail.nossr50.commands.mc.McmmoCommand;
+import com.gmail.nossr50.commands.mc.McrefreshCommand;
+import com.gmail.nossr50.commands.mc.McremoveCommand;
+import com.gmail.nossr50.commands.mc.MctopCommand;
+import com.gmail.nossr50.commands.party.ACommand;
+import com.gmail.nossr50.commands.party.AcceptCommand;
+import com.gmail.nossr50.commands.party.InviteCommand;
+import com.gmail.nossr50.commands.party.PCommand;
+import com.gmail.nossr50.commands.party.PartyCommand;
+import com.gmail.nossr50.commands.party.PtpCommand;
+import com.gmail.nossr50.commands.skills.AcrobaticsCommand;
+import com.gmail.nossr50.commands.skills.ArcheryCommand;
+import com.gmail.nossr50.commands.skills.AxesCommand;
+import com.gmail.nossr50.commands.skills.ExcavationCommand;
+import com.gmail.nossr50.commands.skills.FishingCommand;
+import com.gmail.nossr50.commands.skills.HerbalismCommand;
+import com.gmail.nossr50.commands.skills.MiningCommand;
+import com.gmail.nossr50.commands.skills.RepairCommand;
+import com.gmail.nossr50.commands.skills.ScythesCommand;
+import com.gmail.nossr50.commands.skills.SwordsCommand;
+import com.gmail.nossr50.commands.skills.TamingCommand;
+import com.gmail.nossr50.commands.skills.UnarmedCommand;
+import com.gmail.nossr50.commands.skills.WoodcuttingCommand;
+import com.gmail.nossr50.commands.spout.MchudCommand;
+import com.gmail.nossr50.commands.spout.XplockCommand;
+import com.gmail.nossr50.config.LoadProperties;
+import com.gmail.nossr50.config.LoadTreasures;
+import com.gmail.nossr50.datatypes.PlayerProfile;
+import com.gmail.nossr50.listeners.mcBlockListener;
+import com.gmail.nossr50.listeners.mcEntityListener;
+import com.gmail.nossr50.listeners.mcPlayerListener;
+import com.gmail.nossr50.locale.mcLocale;
+import com.gmail.nossr50.party.Party;
+import com.gmail.nossr50.runnables.SpoutStart;
+import com.gmail.nossr50.runnables.mcBleedTimer;
+import com.gmail.nossr50.runnables.mcSaveTimer;
+import com.gmail.nossr50.runnables.mcTimer;
 
 public class mcMMO extends JavaPlugin {
 
 	public static String maindirectory = "plugins" + File.separator + "mcMMO";
-	public static File file = new File(maindirectory + File.separator
-			+ "config.yml");
-	public static File versionFile = new File(maindirectory + File.separator
-			+ "VERSION");
+	public static File file = new File(maindirectory + File.separator + "config.yml");
+	public static File blocksFile = new File(maindirectory,"blocksPlaced.dat");
+	public static File versionFile = new File(maindirectory, "VERSION");
 
 	private final mcPlayerListener playerListener = new mcPlayerListener(this);
 	private final mcBlockListener blockListener = new mcBlockListener(this);
@@ -63,12 +98,17 @@ public class mcMMO extends JavaPlugin {
 	LoadProperties config;
 	LoadTreasures config2;
 
+	// blocks placed data
+	public static Set<BlockLoc> blocksPlaced;
+
+
 	// Jar stuff
 	public static File mcmmo;
 
 	/**
 	 * Things to be run when the plugin is enabled.
 	 */
+	@Override
 	public void onEnable() {
 		final Plugin thisPlugin = this;
 		mcmmo = this.getFile();
@@ -105,6 +145,8 @@ public class mcMMO extends JavaPlugin {
 		Party.getInstance().loadParties();
 		new Party(this);
 
+		loadBlocksPlaced();
+
 		if (!LoadProperties.useMySQL) {
 			Users.getInstance().loadUsers();
 		}
@@ -113,7 +155,7 @@ public class mcMMO extends JavaPlugin {
 
 		Bukkit.getScheduler().scheduleSyncDelayedTask(this,
 				new SpoutStart(this), 20); // Schedule Spout Activation 1 second
-											// after start-up
+		// after start-up
 
 		// Register events
 		pm.registerEvents(playerListener, this);
@@ -132,7 +174,7 @@ public class mcMMO extends JavaPlugin {
 
 		for (Player player : getServer().getOnlinePlayers()) {
 			Users.addUser(player); // In case of reload add all users back into
-									// PlayerProfile
+			// PlayerProfile
 		}
 
 		System.out.println(pdfFile.getName() + " version "
@@ -147,13 +189,14 @@ public class mcMMO extends JavaPlugin {
 		scheduler.scheduleSyncRepeatingTask(this, new mcTimer(this), 0, 20);
 		// Bleed timer (Runs every two seconds)
 		scheduler
-				.scheduleSyncRepeatingTask(this, new mcBleedTimer(this), 0, 40);
+		.scheduleSyncRepeatingTask(this, new mcBleedTimer(this), 0, 40);
 
 		registerCommands();
 
 		if (LoadProperties.statsTracking) {
 			// Plugin Metrics running in a new thread
 			new Thread(new Runnable() {
+				@Override
 				public void run() {
 					try {
 						// create a new metrics object
@@ -169,6 +212,53 @@ public class mcMMO extends JavaPlugin {
 		}
 	}
 
+
+	@SuppressWarnings("unchecked")
+	private void loadBlocksPlaced() {
+		try {
+			ObjectInputStream reader = new ObjectInputStream(new FileInputStream(blocksFile));
+			blocksPlaced = (Set<BlockLoc>) reader.readObject();
+			reader.close();
+
+			Bukkit.getLogger().info("mcMMO: Loaded " + (blocksPlaced == null? 0 : blocksPlaced.size()) + " blocks placed");
+		} catch (IOException ioe) {
+			Bukkit.getLogger().warning("Could not load blocks placed data: " + ioe);
+		} catch (ClassNotFoundException cnfe) {
+			Bukkit.getLogger().warning("Location data is not of class Set: " + cnfe);
+		} finally {
+			if (blocksPlaced == null) {
+				blocksPlaced = new HashSet<BlockLoc>();
+			}
+		}
+	}
+
+
+	private void saveBlocksPlaced() {
+		try {
+			ObjectOutputStream writer = new ObjectOutputStream(new FileOutputStream(blocksFile, false));
+			writer.writeObject(blocksPlaced);
+			writer.close();
+		} catch (IOException ioe) {
+			Bukkit.getLogger().warning("Could not save blocks placed data: " + ioe);
+		}
+	}
+
+
+	public static void removeBlockPlacedMetadata(Block b, Plugin p) {
+		b.removeMetadata("mcmmoPlacedBlock", p);
+		mcMMO.blocksPlaced.remove(new BlockLoc(b));
+	}
+
+	public static void setBlockPlacedMetadata(Block block, Plugin plugin) {
+		block.setMetadata("mcmmoPlacedBlock", new FixedMetadataValue(plugin, true));
+		mcMMO.blocksPlaced.add(new BlockLoc(block));
+	}
+
+	public static boolean isBlockPlaced(Block block) {
+		return block.hasMetadata("mcmmoPlacedBlock") || mcMMO.blocksPlaced.contains(new BlockLoc(block));
+	}
+
+
 	/**
 	 * Get profile of the player. </br> This function is designed for API usage.
 	 * 
@@ -183,6 +273,7 @@ public class mcMMO extends JavaPlugin {
 	/**
 	 * Things to be run when the plugin is disabled.
 	 */
+	@Override
 	public void onDisable() {
 
 		// Make sure to save player information if the server shuts down
@@ -190,8 +281,10 @@ public class mcMMO extends JavaPlugin {
 			x.save();
 		}
 
+		saveBlocksPlaced();
+
 		Bukkit.getServer().getScheduler().cancelTasks(this); // This removes our
-																// tasks
+		// tasks
 		System.out.println("mcMMO was disabled."); // How informative!
 	}
 
@@ -428,9 +521,9 @@ public class mcMMO extends JavaPlugin {
 		treasuresConfig = YamlConfiguration
 				.loadConfiguration(treasuresConfigFile);
 		InputStream defConfigStream = getResource("treasures.yml"); // Look for
-																	// defaults
-																	// in the
-																	// jar
+		// defaults
+		// in the
+		// jar
 
 		if (defConfigStream != null) {
 			YamlConfiguration defConfig = YamlConfiguration
@@ -465,7 +558,7 @@ public class mcMMO extends JavaPlugin {
 		} catch (IOException ex) {
 			Bukkit.getLogger().severe(
 					"Could not save config to " + treasuresConfigFile
-							+ ex.toString());
+					+ ex.toString());
 		}
 	}
 }

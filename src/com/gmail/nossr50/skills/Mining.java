@@ -7,261 +7,262 @@ import org.bukkit.CoalType;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.sound.SoundEffect;
-import org.bukkit.enchantments.Enchantment;
 
 import com.gmail.nossr50.Users;
 import com.gmail.nossr50.m;
+import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.mcPermissions;
 import com.gmail.nossr50.config.LoadProperties;
-import com.gmail.nossr50.spout.SpoutSounds;
 import com.gmail.nossr50.datatypes.PlayerProfile;
 import com.gmail.nossr50.datatypes.SkillType;
 import com.gmail.nossr50.events.fake.FakePlayerAnimationEvent;
+import com.gmail.nossr50.spout.SpoutSounds;
 
 public class Mining {
 
-    private static Random random = new Random();
+	private static Random random = new Random();
 
-    /**
-     * Drop items from Mining & Blast Mining skills.
-     *
-     * @param block The block to process drops for
-     */
-    public static void miningDrops(Block block) {
-        Location loc = block.getLocation();
-        Material type = block.getType();
-        ItemStack item = new ItemStack(type);
+	/**
+	 * Drop items from Mining & Blast Mining skills.
+	 *
+	 * @param block The block to process drops for
+	 */
+	public static void miningDrops(Block block) {
+		Location loc = block.getLocation();
+		Material type = block.getType();
+		ItemStack item = new ItemStack(type);
 
-        switch (type) {
-        case COAL_ORE:
-            item = new ItemStack(Material.COAL, 1, (short) 0, CoalType.COAL.getData());
-            m.mcDropItem(loc, item);
-            break;
+		switch (type) {
+		case COAL_ORE:
+			item = new ItemStack(Material.COAL, 1, (short) 0, CoalType.COAL.getData());
+			m.mcDropItem(loc, item);
+			break;
 
-        case DIAMOND_ORE:
-            item = new ItemStack(Material.DIAMOND);
-            m.mcDropItem(loc, item);
-            break;
+		case DIAMOND_ORE:
+			item = new ItemStack(Material.DIAMOND);
+			m.mcDropItem(loc, item);
+			break;
 
-        case GLOWING_REDSTONE_ORE:
-        case REDSTONE_ORE:
-            item = new ItemStack(Material.REDSTONE);
-            m.mcDropItems(loc, item, 4);
-            m.mcRandomDropItem(loc, item, 50);
-            break;
+		case GLOWING_REDSTONE_ORE:
+		case REDSTONE_ORE:
+			item = new ItemStack(Material.REDSTONE);
+			m.mcDropItems(loc, item, 4);
+			m.mcRandomDropItem(loc, item, 50);
+			break;
 
-        case GLOWSTONE:
-            item = new ItemStack(Material.GLOWSTONE_DUST);
-            m.mcDropItems(loc, item, 2);
-            m.mcRandomDropItems(loc, item, 50, 2);
-            break;
+		case GLOWSTONE:
+			item = new ItemStack(Material.GLOWSTONE_DUST);
+			m.mcDropItems(loc, item, 2);
+			m.mcRandomDropItems(loc, item, 50, 2);
+			break;
 
-        case LAPIS_ORE:
-            item = new ItemStack(Material.INK_SACK, 1, (short) 0, (byte) 0x4);
-            m.mcDropItems(loc, item, 4);
-            m.mcRandomDropItems(loc, item, 50, 4);
-            break;
+		case LAPIS_ORE:
+			item = new ItemStack(Material.INK_SACK, 1, (short) 0, (byte) 0x4);
+			m.mcDropItems(loc, item, 4);
+			m.mcRandomDropItems(loc, item, 50, 4);
+			break;
 
-        case STONE:
-            item = new ItemStack(Material.COBBLESTONE);
-            m.mcDropItem(loc, item);
-            break;
+		case STONE:
+			item = new ItemStack(Material.COBBLESTONE);
+			m.mcDropItem(loc, item);
+			break;
 
-        default:
-            m.mcDropItem(loc, item);
-            break;
-        }
-    }
+		default:
+			m.mcDropItem(loc, item);
+			break;
+		}
+	}
 
-    /**
-     * Award XP for Mining blocks.
-     *
-     * @param player The player to award XP to
-     * @param block The block to award XP for
-     */
-    public static void miningXP(Player player, Block block) {
-        PlayerProfile PP = Users.getProfile(player);
-        Material type = block.getType();
-        int xp = 0;
-        
-        switch (type) {
-        case COAL_ORE:
-            xp += LoadProperties.mcoal;
-            break;
+	/**
+	 * Award XP for Mining blocks.
+	 *
+	 * @param player The player to award XP to
+	 * @param block The block to award XP for
+	 */
+	public static void miningXP(Player player, Block block) {
+		PlayerProfile PP = Users.getProfile(player);
+		Material type = block.getType();
+		int xp = 0;
 
-        case DIAMOND_ORE:
-            xp += LoadProperties.mdiamond;
-            break;
+		switch (type) {
+		case COAL_ORE:
+			xp += LoadProperties.mcoal;
+			break;
 
-        case ENDER_STONE:
-            xp += LoadProperties.mendstone;
-            break;
+		case DIAMOND_ORE:
+			xp += LoadProperties.mdiamond;
+			break;
 
-        case GLOWING_REDSTONE_ORE:
-        case REDSTONE_ORE:
-            xp += LoadProperties.mredstone;
-            break;
+		case ENDER_STONE:
+			xp += LoadProperties.mendstone;
+			break;
 
-        case GLOWSTONE:
-            xp += LoadProperties.mglowstone;
-            break;
+		case GLOWING_REDSTONE_ORE:
+		case REDSTONE_ORE:
+			xp += LoadProperties.mredstone;
+			break;
 
-        case GOLD_ORE:
-            xp += LoadProperties.mgold;
-            break;
+		case GLOWSTONE:
+			xp += LoadProperties.mglowstone;
+			break;
 
-        case IRON_ORE:
-            xp += LoadProperties.miron;
-            break;
+		case GOLD_ORE:
+			xp += LoadProperties.mgold;
+			break;
 
-        case LAPIS_ORE:
-            xp += LoadProperties.mlapis;
-            break;
+		case IRON_ORE:
+			xp += LoadProperties.miron;
+			break;
 
-        case MOSSY_COBBLESTONE:
-            xp += LoadProperties.mmossstone;
-            break;
+		case LAPIS_ORE:
+			xp += LoadProperties.mlapis;
+			break;
 
-        case NETHERRACK:
-            xp += LoadProperties.mnetherrack;
-            break;
+		case MOSSY_COBBLESTONE:
+			xp += LoadProperties.mmossstone;
+			break;
 
-        case OBSIDIAN:
-            xp += LoadProperties.mobsidian;
-            break;
+		case NETHERRACK:
+			xp += LoadProperties.mnetherrack;
+			break;
 
-        case SANDSTONE:
-            xp += LoadProperties.msandstone;
-            break;
+		case OBSIDIAN:
+			xp += LoadProperties.mobsidian;
+			break;
 
-        case STONE:
-            xp += LoadProperties.mstone;
-            break;
+		case SANDSTONE:
+			xp += LoadProperties.msandstone;
+			break;
 
-        default:
-            break;
-        }
+		case STONE:
+			xp += LoadProperties.mstone;
+			break;
 
-        PP.addXP(SkillType.MINING, xp);
-        Skills.XpCheckSkill(SkillType.MINING, player);
-    }
+		default:
+			break;
+		}
 
-    /**
-     * Process Mining block drops.
-     *
-     * @param player The player mining the block
-     * @param block The block being broken
-     */
-    public static void miningBlockCheck(Player player, Block block) {
-        if (block.hasMetadata("mcmmoPlacedBlock")) {
-            return;
-        }
+		PP.addXP(SkillType.MINING, xp);
+		Skills.XpCheckSkill(SkillType.MINING, player);
+	}
 
-        miningXP(player, block);
+	/**
+	 * Process Mining block drops.
+	 *
+	 * @param player The player mining the block
+	 * @param block The block being broken
+	 */
+	public static void miningBlockCheck(Player player, Block block) {
+		if (mcMMO.isBlockPlaced(block)) {
+			return;
+		}
 
-        if (canBeSuperBroken(block.getType())) {
-            final int MAX_BONUS_LEVEL = 1000;
+		miningXP(player, block);
 
-            int skillLevel = Users.getProfile(player).getSkillLevel(SkillType.MINING);
+		if (canBeSuperBroken(block.getType())) {
+			final int MAX_BONUS_LEVEL = 1000;
 
-            if ((skillLevel > MAX_BONUS_LEVEL || random.nextInt(1000) <= skillLevel) && mcPermissions.getInstance().miningDoubleDrops(player)) {
-                if (player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
-                    m.mcDropItem(block.getLocation(), new ItemStack(block.getType()));
-                }
-                else {
-                    miningDrops(block);
-                }
-            }
-        }
-    }
+			int skillLevel = Users.getProfile(player).getSkillLevel(SkillType.MINING);
 
-    /**
-     * Check to see if a block is broken by Super Breaker.
-     *
-     * @param type The type of Block to check
-     * @return true if the block would be broken by Super Breaker, false otherwise
-     */
-    public static Boolean canBeSuperBroken(Material type) {
-        switch (type) {
-        case COAL_ORE:
-        case DIAMOND_ORE:
-        case ENDER_STONE:
-        case GLOWING_REDSTONE_ORE:
-        case GLOWSTONE:
-        case GOLD_ORE:
-        case IRON_ORE:
-        case LAPIS_ORE:
-        case MOSSY_COBBLESTONE:
-        case NETHERRACK:
-        case OBSIDIAN:
-        case REDSTONE_ORE:
-        case SANDSTONE:
-        case STONE:
-            return true;
+			if ((skillLevel > MAX_BONUS_LEVEL || random.nextInt(1000) <= skillLevel) && mcPermissions.getInstance().miningDoubleDrops(player)) {
+				if (player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
+					m.mcDropItem(block.getLocation(), new ItemStack(block.getType()));
+				}
+				else {
+					miningDrops(block);
+				}
+			}
+		}
+	}
 
-        default:
-            return false;
-        }
-    }
+	/**
+	 * Check to see if a block is broken by Super Breaker.
+	 *
+	 * @param type The type of Block to check
+	 * @return true if the block would be broken by Super Breaker, false otherwise
+	 */
+	public static Boolean canBeSuperBroken(Material type) {
+		switch (type) {
+		case COAL_ORE:
+		case DIAMOND_ORE:
+		case ENDER_STONE:
+		case GLOWING_REDSTONE_ORE:
+		case GLOWSTONE:
+		case GOLD_ORE:
+		case IRON_ORE:
+		case LAPIS_ORE:
+		case MOSSY_COBBLESTONE:
+		case NETHERRACK:
+		case OBSIDIAN:
+		case REDSTONE_ORE:
+		case SANDSTONE:
+		case STONE:
+			return true;
 
-    /**
-     * Handle the Super Breaker ability.
-     *
-     * @param player The player using the ability
-     * @param block The block being affected
-     */
-    public static void SuperBreakerBlockCheck(Player player, Block block) {
-        Material type = block.getType();
-        int tier = m.getTier(player.getItemInHand());
-        int durabilityLoss = LoadProperties.abilityDurabilityLoss;
-        FakePlayerAnimationEvent armswing = new FakePlayerAnimationEvent(player);
+		default:
+			return false;
+		}
+	}
 
-        switch (type) {
-        case OBSIDIAN:
-            if (tier < 4) {
-                return;
-            }
-            durabilityLoss = durabilityLoss * 5; //Obsidian needs to do more damage than normal
-            /* FALL THROUGH */
+	/**
+	 * Handle the Super Breaker ability.
+	 *
+	 * @param player The player using the ability
+	 * @param block The block being affected
+	 */
+	public static void SuperBreakerBlockCheck(Player player, Block block) {
+		Material type = block.getType();
+		int tier = m.getTier(player.getItemInHand());
+		int durabilityLoss = LoadProperties.abilityDurabilityLoss;
+		FakePlayerAnimationEvent armswing = new FakePlayerAnimationEvent(player);
 
-        case DIAMOND_ORE:
-        case GLOWING_REDSTONE_ORE:
-        case GOLD_ORE:
-        case LAPIS_ORE:
-        case REDSTONE_ORE:
-            if (tier < 3) {
-                return;
-            }
-            /* FALL THROUGH */
+		switch (type) {
+		case OBSIDIAN:
+			if (tier < 4) {
+				return;
+			}
+			durabilityLoss = durabilityLoss * 5; //Obsidian needs to do more damage than normal
+			/* FALL THROUGH */
 
-        case IRON_ORE:
-            if (tier < 2) {
-                return;
-            }
-            /* FALL THROUGH */
+		case DIAMOND_ORE:
+		case GLOWING_REDSTONE_ORE:
+		case GOLD_ORE:
+		case LAPIS_ORE:
+		case REDSTONE_ORE:
+			if (tier < 3) {
+				return;
+			}
+			/* FALL THROUGH */
 
-        case COAL_ORE:
-        case ENDER_STONE:
-        case GLOWSTONE:
-        case MOSSY_COBBLESTONE:
-        case NETHERRACK:
-        case SANDSTONE:
-        case STONE:
-            if (block.hasMetadata("mcmmoPlacedBlock")) {
-                return;
-            }
+		case IRON_ORE:
+			if (tier < 2) {
+				return;
+			}
+			/* FALL THROUGH */
 
-            Bukkit.getPluginManager().callEvent(armswing);
-            Skills.abilityDurabilityLoss(player.getItemInHand(), durabilityLoss);
+		case COAL_ORE:
+		case ENDER_STONE:
+		case GLOWSTONE:
+		case MOSSY_COBBLESTONE:
+		case NETHERRACK:
+		case SANDSTONE:
+		case STONE:
+			if (mcMMO.isBlockPlaced(block)) {
+				return;
+			}
 
-            miningBlockCheck(player, block);
+			Bukkit.getPluginManager().callEvent(armswing);
+			Skills.abilityDurabilityLoss(player.getItemInHand(), durabilityLoss);
 
-            if (LoadProperties.spoutEnabled) {
-                SpoutSounds.playSoundForPlayer(SoundEffect.POP, player, block.getLocation());
-            }
-        }
-    }
+			miningBlockCheck(player, block);
+
+			if (LoadProperties.spoutEnabled) {
+				SpoutSounds.playSoundForPlayer(SoundEffect.POP, player, block.getLocation());
+			}
+		}
+	}
 }
