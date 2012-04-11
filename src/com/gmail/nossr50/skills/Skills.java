@@ -445,12 +445,11 @@ public class Skills {
         case LEAF_BLOWER:
             if (!m.blockBreakSimulate(block, player, true)) {
                 activate = false;
-                break;
             }
-            /* FALLS THROUGH */
+            break;
 
         default:
-            activate = true;
+            activate = false;
             break;
         }
 
