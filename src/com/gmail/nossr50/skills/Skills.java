@@ -450,7 +450,7 @@ public class Skills {
             /* FALLS THROUGH */
 
         default:
-            activate = false;
+            activate = true;
             break;
         }
 
