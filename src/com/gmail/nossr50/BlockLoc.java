@@ -36,11 +36,11 @@ public class BlockLoc implements Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 3;
+		int hash = 7;
 
-		hash = 19 * hash + (x ^ (x >>> 32));
-		hash = 19 * hash + (y ^ (y >>> 32));
-		hash = 19 * hash + (z ^ (z >>> 32));
+		hash = 31 * hash + x;
+		hash = 31 * hash + y;
+		hash = 31 * hash + z;
 		return hash;
 	}
 
