@@ -216,11 +216,14 @@ public class mcMMO extends JavaPlugin {
 	@SuppressWarnings("unchecked")
 	private void loadBlocksPlaced() {
 		try {
+			Bukkit.getLogger().info("mcMMO: Loading blocks placed...");
+			long time = System.currentTimeMillis();
 			ObjectInputStream reader = new ObjectInputStream(new FileInputStream(blocksFile));
 			blocksPlaced = (Set<BlockLoc>) reader.readObject();
 			reader.close();
+			long end = System.currentTimeMillis();
 
-			Bukkit.getLogger().info("mcMMO: Loaded " + (blocksPlaced == null? 0 : blocksPlaced.size()) + " blocks placed");
+			Bukkit.getLogger().info("mcMMO: Loaded " + (blocksPlaced == null? 0 : blocksPlaced.size()) + " blocks placed (took " + ((end - time) / 1000) + " sec)");
 		} catch (IOException ioe) {
 			Bukkit.getLogger().warning("Could not load blocks placed data: " + ioe);
 		} catch (ClassNotFoundException cnfe) {
