@@ -15,6 +15,7 @@ import org.bukkit.Bukkit;
 import com.gmail.nossr50.Combat;
 import com.gmail.nossr50.Users;
 import com.gmail.nossr50.m;
+import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.mcPermissions;
 import com.gmail.nossr50.config.LoadProperties;
 import com.gmail.nossr50.datatypes.PlayerProfile;
@@ -111,7 +112,7 @@ public class WoodCutting {
                         break;
                     }
 
-                    if (!x.hasMetadata("mcmmoPlacedBlock")) {
+                    if (!mcMMO.isBlockPlaced(x)) {
                         WoodCutting.woodCuttingProcCheck(player, x);
 
                         switch (species) {
@@ -197,7 +198,7 @@ public class WoodCutting {
         Block zNegative = currentBlock.getRelative(0, 0, -1);
         Block yPositive = currentBlock.getRelative(0, 1, 0);
 
-        if (!currentBlock.hasMetadata("mcmmoPlacedBlock")) {
+        if (!mcMMO.isBlockPlaced(currentBlock)) {
             if (!isTooAggressive(currentBlock, xPositive) && treeFellerCompatible(xPositive) && !toBeFelled.contains(xPositive)) {
                 processTreeFelling(xPositive, toBeFelled);
             }
@@ -216,7 +217,7 @@ public class WoodCutting {
         }
 
         if (treeFellerCompatible(yPositive)) {
-            if(!currentBlock.hasMetadata("mcmmoPlacedBlock") && !toBeFelled.contains(yPositive)) {
+            if (!mcMMO.isBlockPlaced(currentBlock) && !toBeFelled.contains(yPositive)) {
                 processTreeFelling(yPositive, toBeFelled);
             }
         }
@@ -271,7 +272,7 @@ public class WoodCutting {
         int xp = 0;
         TreeSpecies species = TreeSpecies.getByData(block.getData());
 
-        if (block.hasMetadata("mcmmoPlacedBlock")) {
+        if (mcMMO.isBlockPlaced(block)) {
             return;
         }
 
