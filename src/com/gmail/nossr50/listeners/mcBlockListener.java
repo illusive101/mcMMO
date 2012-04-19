@@ -35,6 +35,7 @@ import com.gmail.nossr50.skills.Excavation;
 import com.gmail.nossr50.skills.Mining;
 import com.gmail.nossr50.skills.Repair;
 import com.gmail.nossr50.skills.Skills;
+import com.gmail.nossr50.skills.Unarmed;
 import com.gmail.nossr50.skills.WoodCutting;
 import com.gmail.nossr50.spout.SpoutSounds;
 
@@ -251,7 +252,7 @@ public class mcBlockListener implements Listener {
         }
 		 */
 		if (PP.getAbilityMode(AbilityType.GIGA_DRILL_BREAKER) && Skills.triggerCheck(player, block, AbilityType.GIGA_DRILL_BREAKER)) {
-			if (LoadProperties.excavationRequiresShovel && ItemChecks.isShovel(inhand)) {
+			if (LoadProperties.excavationRequiresShovel && ItemChecks.isShovel(inhand) && Excavation.canBeGigaDrillBroken(block.getType())) {
 				event.setInstaBreak(true);
 				Excavation.gigaDrillBreaker(player, block);
 			}
@@ -260,7 +261,7 @@ public class mcBlockListener implements Listener {
 				Excavation.gigaDrillBreaker(player, block);
 			}
 		}
-		else if (PP.getAbilityMode(AbilityType.BERSERK) && Skills.triggerCheck(player, block, AbilityType.BERSERK)) {
+		else if (PP.getAbilityMode(AbilityType.BERSERK) && Skills.triggerCheck(player, block, AbilityType.BERSERK) && Unarmed.canBeBeserked(block.getType())) {
 			if (inhand.getType().equals(Material.AIR)) {
 				FakePlayerAnimationEvent armswing = new FakePlayerAnimationEvent(player);
 				Bukkit.getPluginManager().callEvent(armswing);
@@ -272,7 +273,7 @@ public class mcBlockListener implements Listener {
 				SpoutSounds.playSoundForPlayer(SoundEffect.POP, player, block.getLocation());
 			}
 		}
-		else if (PP.getAbilityMode(AbilityType.SUPER_BREAKER) && Skills.triggerCheck(player, block, AbilityType.SUPER_BREAKER)) {
+		else if (PP.getAbilityMode(AbilityType.SUPER_BREAKER) && Skills.triggerCheck(player, block, AbilityType.SUPER_BREAKER) && Mining.canBeSuperBroken(block.getType())) {
 			if (LoadProperties.miningrequirespickaxe && ItemChecks.isMiningPick(inhand)) {
 				event.setInstaBreak(true);
 				Mining.SuperBreakerBlockCheck(player, block);

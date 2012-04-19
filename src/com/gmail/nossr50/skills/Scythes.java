@@ -23,6 +23,30 @@ public class Scythes {
 	private static Random random = new Random();
 
 	/**
+	 * Apply bonus to Scythes damage.
+	 * 
+	 * @param PPa
+	 *            Profile of the attacking player
+	 * @param event
+	 *            The event to modify
+	 */
+	public static void scythesBonus(PlayerProfile PPa,
+			EntityDamageByEntityEvent event) {
+		final int MAX_BONUS = 12;
+		int bonus = 4;
+
+		bonus += PPa.getSkillLevel(SkillType.SCYTHES) / 50; // Add 1 DMG for
+															// every 50 skill
+															// levels
+
+		if (bonus > MAX_BONUS) {
+			bonus = MAX_BONUS;
+		}
+
+		event.setDamage(event.getDamage() + bonus);
+	}
+	
+	/**
 	 * Scythe slow ability!
 	 */
 

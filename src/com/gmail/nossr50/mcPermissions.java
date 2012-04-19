@@ -257,6 +257,10 @@ public class mcPermissions {
     	return player.hasPermission("mcmmo.ability.scythes.criticalhit");
     }
     
+    public boolean scytheBonus(Player player) {
+    	return player.hasPermission("mcmmo.ability.scythes.scythesBonus");
+    }
+    
     /*
      * MCMMO.ABILITY.AXES.*
      */

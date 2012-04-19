@@ -17,6 +17,28 @@ import com.gmail.nossr50.locale.mcLocale;
 public class Unarmed {
 
 	private static Random random = new Random();
+	
+	/**
+	 * Check to see if a block can be broken by Beserker Breaker.
+	 *
+	 * @param material The type of block to check
+	 * @return
+	 */
+	public static boolean canBeBeserked(Material type) {
+		switch (type) {
+		case CLAY:
+		case DIRT:
+		case GRASS:
+		case GRAVEL:
+		case MYCEL:
+		case SAND:
+		case SOUL_SAND:
+			return true;
+
+		default:
+			return false;
+		}
+	}
 
 	/**
 	 * Apply bonus to Unarmed damage.

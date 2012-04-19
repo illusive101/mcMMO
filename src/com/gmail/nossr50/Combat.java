@@ -116,7 +116,9 @@ public class Combat {
 				if (mcPermissions.getInstance().scytheCriticalCheck(attacker)) {
 					Scythes.scytheCriticalCheck(attacker, event);
 				}
-
+				if (mcPermissions.getInstance().scytheBonus(attacker)) {
+					Scythes.scythesBonus(PPa, event);
+				}
 				if (PPa.getAbilityMode(AbilityType.GRIM_STRIKE)) {
 					applyAbilityAoE(attacker, target, event.getDamage(),
 							plugin, SkillType.SCYTHES);
@@ -205,62 +207,66 @@ public class Combat {
 		}
 	}
 
-	/**
-	 * Process archery abilities.
-	 * 
-	 * @param event
-	 *            The event to run the archery checks on.
-	 * @param pluginx
-	 *            mcMMO plugin instance
-	 */
-	public static void archeryCheck(EntityDamageByEntityEvent event,
-			mcMMO pluginx) {
-		Arrow arrow = (Arrow) event.getDamager();
-		LivingEntity shooter = arrow.getShooter();
-		LivingEntity target = (LivingEntity) event.getEntity();
+    /**
+     * Process archery abilities.
+     *
+     * @param event The event to run the archery checks on.
+     * @param pluginx mcMMO plugin instance
+     */
+    public static void archeryCheck(EntityDamageByEntityEvent event, mcMMO pluginx) {
+        Arrow arrow = (Arrow) event.getDamager();
+        LivingEntity shooter = arrow.getShooter();
+        LivingEntity target = (LivingEntity) event.getEntity();
 
-		if (target instanceof Player) {
-			Player defender = (Player) target;
+        if (target instanceof Player) {
+            Player defender = (Player) target;
 
-			if (mcPermissions.getInstance().unarmed(defender)
-					&& defender.getItemInHand().getType().equals(Material.AIR)) {
-				Unarmed.deflectCheck(defender, event);
-			}
-		}
+            if (mcPermissions.getInstance().unarmed(defender) && defender.getItemInHand().getType().equals(Material.AIR)) {
+                Unarmed.deflectCheck(defender, event);
+            }
+        }
 
-		if (shooter instanceof Player) {
-			Player attacker = (Player) shooter;
-			PlayerProfile PPa = Users.getProfile(attacker);
-			int damage = event.getDamage();
+        if (shooter instanceof Player) {
+            Player attacker = (Player) shooter;
+            PlayerProfile PPa = Users.getProfile(attacker);
+            int damage = event.getDamage();
 
-			if (mcPermissions.getInstance().archery(attacker) && damage > 0) {
-				if (mcPermissions.getInstance().trackArrows(attacker)) {
-					Archery.trackArrows(pluginx, target, PPa);
-				}
+            if (mcPermissions.getInstance().archery(attacker) && damage > 0) {
+                
+                /*Archery needs a damage bonus to be viable in PVP*/
+                int skillLvl = Users.getProfile(attacker).getSkillLevel(SkillType.ARCHERY);
+                double dmgBonusPercent = ((skillLvl / 50) * 0.1D);
+                
+                /* Cap maximum bonus at 200% */
+                if(dmgBonusPercent > 2)
+                    dmgBonusPercent = 2;
+                
+                /* Every 100 skill levels Archery gains 20% damage bonus, set that here */
+                //TODO: Work in progress for balancing out Archery, will work on it more later...
+                int archeryBonus = (int)(event.getDamage() * dmgBonusPercent);
+                event.setDamage(event.getDamage() + archeryBonus);
+                
+                if (mcPermissions.getInstance().trackArrows(attacker)) {
+                    Archery.trackArrows(pluginx, target, PPa);
+                }
 
-				if (mcPermissions.getInstance().ignition(attacker)) {
-					Archery.ignitionCheck(target, attacker);
-				}
+                startGainXp(attacker, PPa, target, SkillType.ARCHERY, pluginx);
 
-				startGainXp(attacker, PPa, target, SkillType.ARCHERY, pluginx);
+                if (target instanceof Player) {
+                    Player defender = (Player) target;
+                    PlayerProfile PPd = Users.getProfile(defender);
 
-				if (target instanceof Player) {
-					Player defender = (Player) target;
-					PlayerProfile PPd = Users.getProfile(defender);
+                    if (PPa.inParty() && PPd.inParty() && Party.getInstance().inSameParty(defender, attacker)) {
+                        event.setCancelled(true);
+                        return;
+                    }
 
-					if (PPa.inParty()
-							&& PPd.inParty()
-							&& Party.getInstance().inSameParty(defender,
-									attacker)) {
-						event.setCancelled(true);
-						return;
-					}
-
-					Archery.dazeCheck(defender, attacker);
-				}
-			}
-		}
-	}
+                    Archery.freezeCheck(pluginx, defender, attacker);
+                    Archery.dazeCheck(defender, attacker);
+                }
+            }
+        }
+    }
 
 	/**
 	 * Attempt to damage target for value dmg with reason CUSTOM

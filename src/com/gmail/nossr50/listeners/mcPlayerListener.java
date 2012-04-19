@@ -18,6 +18,7 @@ import org.bukkit.event.player.PlayerFishEvent.State;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -38,6 +39,7 @@ import com.gmail.nossr50.datatypes.PlayerProfile;
 import com.gmail.nossr50.datatypes.SkillType;
 import com.gmail.nossr50.locale.mcLocale;
 import com.gmail.nossr50.party.Party;
+import com.gmail.nossr50.skills.Archery;
 import com.gmail.nossr50.skills.BlastMining;
 import com.gmail.nossr50.skills.Fishing;
 import com.gmail.nossr50.skills.Herbalism;
@@ -77,6 +79,13 @@ public class mcPlayerListener implements Listener {
         }
     }
 
+    
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onPlayerMove(PlayerMoveEvent event){
+		if (Archery.frozenPlayers.contains(event.getPlayer().getName())) 
+	         event.setCancelled(true);
+	}
+    
     /**
      * Monitor PlayerFish events.
      *
@@ -187,6 +196,9 @@ public class mcPlayerListener implements Listener {
         Block block = event.getClickedBlock();
         ItemStack is = player.getItemInHand();
         Material mat;
+        
+		if (event.getItem() != null && event.getItem().getType() == Material.ENDER_PEARL && Archery.frozenPlayers.contains(event.getPlayer().getName()))
+	         event.setCancelled(true);
 
         /* Fix for NPE on interacting with air */
         if (block == null) {
@@ -195,6 +207,8 @@ public class mcPlayerListener implements Listener {
         else {
             mat = block.getType();
         }
+        
+        
 
         switch (action) {
         case RIGHT_CLICK_BLOCK:
