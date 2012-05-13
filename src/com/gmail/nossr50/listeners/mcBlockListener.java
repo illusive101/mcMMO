@@ -32,6 +32,7 @@ import com.gmail.nossr50.datatypes.ToolType;
 import com.gmail.nossr50.events.fake.FakeBlockBreakEvent;
 import com.gmail.nossr50.events.fake.FakePlayerAnimationEvent;
 import com.gmail.nossr50.skills.Excavation;
+import com.gmail.nossr50.skills.Herbalism;
 import com.gmail.nossr50.skills.Mining;
 import com.gmail.nossr50.skills.Repair;
 import com.gmail.nossr50.skills.Skills;
@@ -144,20 +145,20 @@ public class mcBlockListener implements Listener {
 		 * HERBALISM
 		 */
 
-		/* Green Terra 
+		/* Green Terra
         if (PP.getToolPreparationMode(ToolType.HOE) && mcPermissions.getInstance().greenTerra(player) && ((mat.equals(Material.CROPS) && block.getData() == CropState.RIPE.getData()) || Herbalism.canBeGreenTerra(mat))) {
             Skills.abilityCheck(player, SkillType.HERBALISM);
         }
-		 */
-		/* Triple drops 
+		 
+		 Triple drops 
         if (PP.getAbilityMode(AbilityType.GREEN_TERRA) && Herbalism.canBeGreenTerra(mat)) {
             Herbalism.herbalismProcCheck(block, player, event, plugin);
         }
-
+		 */
         if (mcPermissions.getInstance().herbalismDoubleDrops(player) && Herbalism.canBeGreenTerra(mat)) {
             Herbalism.herbalismProcCheck(block, player, event, plugin);
         }
-		 */
+
 		/*
 		 * MINING
 		 */

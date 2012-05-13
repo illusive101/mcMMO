@@ -81,6 +81,7 @@ public class Herbalism {
 	 * @param type The type of Block to check
 	 * @return true if the block is affected, false otherwise
 
+*/
     public static Boolean canBeGreenTerra(Material type){
         switch (type) {
         case BROWN_MUSHROOM:
@@ -101,7 +102,7 @@ public class Herbalism {
             return false;
         }
     }
-	 */
+
 
 	/**
 	 * Check for extra Herbalism drops.

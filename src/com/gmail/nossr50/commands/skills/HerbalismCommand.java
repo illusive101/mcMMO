@@ -35,13 +35,6 @@ public class HerbalismCommand implements CommandExecutor {
 		if (PP.getSkillLevel(SkillType.HERBALISM) >= 1000)
 			bonus++;
 
-		int ticks = 2;
-		int x = PP.getSkillLevel(SkillType.HERBALISM);
-		while (x >= 50) {
-			x -= 50;
-			ticks++;
-		}
-
 		float skillvalue = (float) PP.getSkillLevel(SkillType.HERBALISM);
 
 		String percentage = String.valueOf((skillvalue / 1000) * 100);

@@ -17,11 +17,12 @@ import com.gmail.nossr50.locale.mcLocale;
 public class Unarmed {
 
 	private static Random random = new Random();
-	
+
 	/**
 	 * Check to see if a block can be broken by Beserker Breaker.
-	 *
-	 * @param material The type of block to check
+	 * 
+	 * @param material
+	 *            The type of block to check
 	 * @return
 	 */
 	public static boolean canBeBeserked(Material type) {
@@ -81,16 +82,10 @@ public class Unarmed {
 		if (!defender.getItemInHand().getType().equals(Material.AIR)) {
 			if (Math.random() * 5000 <= skillCheck) {
 				ItemStack inHand = defender.getItemInHand();
+				defender.sendMessage(mcLocale.getString("Skills.Disarmed"));
 
-				if (!inHand.getType().equals(Material.AIR)) {
-					if (random.nextInt(5000) <= skillCheck) {
-						defender.sendMessage(mcLocale
-								.getString("Skills.Disarmed"));
-
-						m.mcDropItem(defender.getLocation(), inHand);
-						defender.setItemInHand(new ItemStack(Material.AIR));
-					}
-				}
+				m.mcDropItem(defender.getLocation(), inHand);
+				defender.setItemInHand(new ItemStack(Material.AIR));
 			}
 		}
 	}

@@ -78,7 +78,7 @@ public class InspectCommand implements CommandExecutor {
             if (mcPermissions.getInstance().unarmed(target))
                 sender.sendMessage(Skills.getSkillStats(mcLocale.getString("mcPlayerListener.UnarmedSkill"), PPt.getSkillLevel(SkillType.UNARMED), PPt.getSkillXpLevel(SkillType.UNARMED), PPt.getXpToLevel(SkillType.UNARMED)));
             if (mcPermissions.getInstance().scythes(target))
-            	sender.sendMessage(Skills.getSkillStats(mcLocale.getString("mcPlayerListener.UnarmedSkill"), PPt.getSkillLevel(SkillType.SCYTHES), PPt.getSkillXpLevel(SkillType.SCYTHES), PPt.getXpToLevel(SkillType.SCYTHES)));
+            	sender.sendMessage(Skills.getSkillStats(mcLocale.getString("mcPlayerListener.ScythesSkill"), PPt.getSkillLevel(SkillType.SCYTHES), PPt.getSkillXpLevel(SkillType.SCYTHES), PPt.getXpToLevel(SkillType.SCYTHES)));
 
             sender.sendMessage(ChatColor.GOLD + "-=MISC SKILLS=-"); //TODO: Needs more locale.
             if (mcPermissions.getInstance().acrobatics(target))

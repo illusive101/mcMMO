@@ -32,7 +32,7 @@ public class ScythesCommand implements CommandExecutor {
 			percentage = "75";
 		
 		int ticks = 2;
-		int x = PP.getSkillLevel(SkillType.AXES);
+		int x = PP.getSkillLevel(SkillType.SCYTHES);
 		while (x >= 50) {
 			x -= 50;
 			ticks++;
