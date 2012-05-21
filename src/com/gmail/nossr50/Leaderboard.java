@@ -121,7 +121,7 @@ public class Leaderboard {
             in.close();
         }
         catch (Exception e) {
-            Bukkit.getLogger().severe(("Exception while reading " + location + " (Are you sure you formatted it correctly?)" + e.toString()));
+            Bukkit.getLogger().severe(("Exception while reading leaderboards" + location + " (Are you sure you formatted it correctly?)" + e.toString()));
         }
 
         //Write the leader board files

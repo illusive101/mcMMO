@@ -17,6 +17,7 @@ import com.gmail.nossr50.party.Party;
 import com.gmail.nossr50.Users;
 import com.gmail.nossr50.m;
 import com.gmail.nossr50.mcMMO;
+import com.sun.istack.internal.logging.Logger;
 
 public class PlayerProfile {
 
@@ -172,7 +173,7 @@ public class PlayerProfile {
 			// lastlogin = Integer.parseInt(users.get(1).get(0));
 			party = users.get(1).get(1);
 			HashMap<Integer, ArrayList<String>> cooldowns = mcMMO.database
-					.read("SELECT mining, woodcutting, unarmed, herbalism, excavation, swords, axes, blast_mining FROM "
+					.read("SELECT mining, woodcutting, unarmed, herbalism, excavation, swords, axes, blast_mining, grim FROM "
 							+ LoadProperties.MySQLtablePrefix
 							+ "cooldowns WHERE user_id = " + id);
 			/*
@@ -404,7 +405,7 @@ public class PlayerProfile {
 			in.close();
 		} catch (Exception e) {
 			Bukkit.getLogger().severe(
-					"Exception while reading " + location
+					"Exception while reading loadfile " + location
 							+ " (Are you sure you formatted it correctly?)"
 							+ e.toString());
 		}
@@ -453,7 +454,7 @@ public class PlayerProfile {
 					+ skills.get(SkillType.SWORDS) + ", axes = "
 					+ skills.get(SkillType.AXES) + ", acrobatics = "
 					+ skills.get(SkillType.ACROBATICS) + ", fishing = "
-					+ skills.get(SkillType.FISHING) + " WHERE user_id = "
+					+ skills.get(SkillType.FISHING) + ", scythes =  "
 					+ skills.get(SkillType.SCYTHES) + " WHERE user_id = "
 					+ this.userid);
 			mcMMO.database.write("UPDATE " + LoadProperties.MySQLtablePrefix
@@ -469,27 +470,34 @@ public class PlayerProfile {
 					+ skillsXp.get(SkillType.SWORDS) + ", axes = "
 					+ skillsXp.get(SkillType.AXES) + ", acrobatics = "
 					+ skillsXp.get(SkillType.ACROBATICS) + ", fishing = "
-					+ skillsXp.get(SkillType.FISHING) + " WHERE user_id = "
+					+ skillsXp.get(SkillType.FISHING) + ", scythes = "
+					+ skillsXp.get(SkillType.SCYTHES) + " WHERE user_id = "
 					+ this.userid);
 		} else {
 			// otherwise save to flatfile
 			try {
 				// Open the file
 				FileReader file = new FileReader(location);
+				Bukkit.getLogger().info("New File Created");
 				BufferedReader in = new BufferedReader(file);
+				Bukkit.getLogger().info("BufferedReader");
 				StringBuilder writer = new StringBuilder();
+				Bukkit.getLogger().info("New StringBuilder!");
 				String line = "";
 
+				Bukkit.getLogger().info("onto checking to see if line != null");
 				// While not at the end of the file
 				while ((line = in.readLine()) != null) {
 					// Read the line in and copy it to the output it's not the
 					// player
 					// we want to edit
 					if (!line.split(":")[0].equalsIgnoreCase(playerName)) {
+						Bukkit.getLogger().info("Player doesn't exist.");
 						writer.append(line).append("\r\n");
 
 						// Otherwise write the new player information
 					} else {
+						Bukkit.getLogger().info("New Player");
 						writer.append(playerName + ":");
 						writer.append(skills.get(SkillType.MINING) + ":");
 						writer.append("" + ":");
@@ -551,7 +559,7 @@ public class PlayerProfile {
 				out.close();
 			} catch (Exception e) {
 				Bukkit.getLogger().severe(
-						"Exception while writing to " + location
+						"Exception while writing to saveFile " + location
 								+ " (Are you sure you formatted it correctly?)"
 								+ e.toString());
 			}
@@ -631,7 +639,7 @@ public class PlayerProfile {
 			out.close();
 		} catch (Exception e) {
 			Bukkit.getLogger().severe(
-					"Exception while writing to " + location
+					"Exception while writing addPlayer to " + location
 							+ " (Are you sure you formatted it correctly?)"
 							+ e.toString());
 		}
@@ -858,7 +866,7 @@ public class PlayerProfile {
 		case HOE:
 			hoePreparationMode = bool;
 			break;
-			
+
 		case SCYTHE:
 			scythePreparationMode = bool;
 			break;
